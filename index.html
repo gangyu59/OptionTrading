@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Option Trading</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="static/js/chart.js"></script> <!-- 使用本地的 Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Option Trading Advisor</h1>
+    <div>
+        <label for="symbol">Stock Symbol:</label>
+        <input type="text" id="symbol" value="NVDA" placeholder="Enter stock symbol (e.g., NVDA)">
+    </div>
+    <div>
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date">
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date">
+    </div>
+    <button class="large-button" onclick="fetchData()">Get Data</button>
+    <button class="large-button" onclick="getAdvice()">Get AI Advice</button>
+    <div id="stock-data">
+        <canvas id="candle-chart"></canvas>
+        <canvas id="macd-chart"></canvas>
+        <canvas id="kdj-chart"></canvas>
+    </div>
+    <div id="advice"></div>
+
+    <script src="static/js/fetchData.js"></script>
+    <script src="static/js/stockChart.js"></script>
+    <script src="static/js/generateAdvice.js"></script>
+    <script src="static/js/main.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
