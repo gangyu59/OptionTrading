@@ -1,1 +1,20 @@
+body {
+    font-family: Arial, sans-serif;
+}
 
+.large-button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    margin: 10px;
+}
+
+#stock-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+canvas {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+}
