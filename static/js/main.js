@@ -68,7 +68,7 @@ function getTodayDate() {
 
 function getLastMonthDate() {
     const today = new Date();
-    const lastMonth = new Date(today.setMonth(today.getMonth() - 2));
+    const lastMonth = new Date(today.setMonth(today.getMonth() - 1));
     return lastMonth.toISOString().split('T')[0];
 }
 

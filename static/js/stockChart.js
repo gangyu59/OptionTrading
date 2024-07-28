@@ -47,7 +47,7 @@ function renderTrendChart(stockData) {
             responsive: true,
             scales: {
                 x: {
-                    display: true // 暂时保留X轴
+                    display: false // 暂时保留X轴
                 },
                 y: {
                     display: true,
@@ -106,7 +106,7 @@ function renderMACDChart(macdData) {
             responsive: true,
             scales: {
                 x: {
-                    display: true // 暂时保留X轴
+                    display: false // 暂时保留X轴
                 },
                 y: {
                     display: true,
