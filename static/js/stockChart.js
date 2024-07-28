@@ -47,11 +47,7 @@ function renderTrendChart(stockData) {
             responsive: true,
             scales: {
                 x: {
-                    display: true,
-                    title: {
-                        display: true,
-                        text: 'Date'
-                    }
+                    display: true // 暂时保留X轴
                 },
                 y: {
                     display: true,
@@ -110,11 +106,7 @@ function renderMACDChart(macdData) {
             responsive: true,
             scales: {
                 x: {
-                    display: true,
-                    title: {
-                        display: true,
-                        text: 'Date'
-                    }
+                    display: true // 暂时保留X轴
                 },
                 y: {
                     display: true,
@@ -172,7 +164,7 @@ function renderKDJChart(kdjData) {
             responsive: true,
             scales: {
                 x: {
-                    display: true,
+                    display: true, // 暂时保留X轴
                     title: {
                         display: true,
                         text: 'Date'
