@@ -76,31 +76,35 @@ function renderMACDChart(macdData) {
         labels: labels,
         datasets: [
             {
+                type: 'bar',
                 label: 'MACD',
-                data: macd,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-                fill: false,
-            },
-            {
-                label: 'Signal Line',
-                data: signal,
-                borderColor: 'rgba(192, 75, 75, 1)',
-                borderWidth: 1,
-                fill: false,
-            },
-            {
-                label: 'Histogram',
                 data: histogram,
                 backgroundColor: histogram.map(value => value >= 0 ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)'),
                 borderColor: histogram.map(value => value >= 0 ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)'),
                 borderWidth: 1,
+            },
+            {
+                type: 'line',
+                label: 'DIF',
+                data: macd,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0 // 不显示数据点
+            },
+            {
+                type: 'line',
+                label: 'DEA',
+                data: signal,
+                borderColor: 'rgba(192, 75, 75, 1)',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0 // 不显示数据点
             }
         ]
     };
 
     new Chart(ctx, {
-        type: 'bar',
         data: chartData,
         options: {
             responsive: true,
@@ -140,6 +144,7 @@ function renderKDJChart(kdjData) {
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
                 fill: false,
+                pointRadius: 0 // 不显示数据点
             },
             {
                 label: 'D',
@@ -147,6 +152,7 @@ function renderKDJChart(kdjData) {
                 borderColor: 'rgba(192, 75, 75, 1)',
                 borderWidth: 1,
                 fill: false,
+                pointRadius: 0 // 不显示数据点
             },
             {
                 label: 'J',
@@ -154,6 +160,7 @@ function renderKDJChart(kdjData) {
                 borderColor: 'rgba(75, 75, 192, 1)',
                 borderWidth: 1,
                 fill: false,
+                pointRadius: 0 // 不显示数据点
             }
         ]
     };
