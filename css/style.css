@@ -18,3 +18,16 @@ canvas {
     margin-top: 20px;
     border: 1px solid #ccc;
 }
+
+
+#candle-chart {
+    height: 400px; /* 主图高度增加 */
+}
+
+#macd-chart {
+    height: 200px; /* MACD 图高度降低 */
+}
+
+#kdj-chart {
+    height: 200px; /* KDJ 图高度降低 */
+}
