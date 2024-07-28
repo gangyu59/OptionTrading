@@ -25,10 +25,50 @@ async function fetchStockData(symbol, startDate, endDate) {
                 volume: parseInt(timeSeries[date]['6. volume'])
             }));
 
-        console.log("Parsed stock data:", stockData.slice(0, 5)); // Print the first 5 data points for verification
+        const bollingerBands = await fetchBollingerBands(symbol, startDate, endDate);
+        stockData.forEach((data, index) => {
+            const band = bollingerBands.find(b => b.date === data.date);
+            if (band) {
+                data.upperBand = band.upperBand;
+                data.lowerBand = band.lowerBand;
+                data.middleBand = band.middleBand;
+            }
+        });
+
+        console.log("Parsed stock data with Bollinger Bands:", stockData.slice(0, 5)); // Print the first 5 data points for verification
         return stockData;
     } catch (error) {
         console.error("Error fetching stock data:", error);
+        throw error;
+    }
+}
+
+async function fetchBollingerBands(symbol, startDate, endDate) {
+    console.log("Fetching Bollinger Bands data...");
+    const url = `https://www.alphavantage.co/query?function=BBANDS&symbol=${symbol}&interval=daily&time_period=20&series_type=close&apikey=${API_KEY}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("Bollinger Bands data response received:", data);
+
+        if (data.Information) {
+            throw new Error(data.Information);
+        }
+
+        const bollingerData = Object.keys(data['Technical Analysis: BBANDS'])
+            .filter(date => date >= startDate && date <= endDate)
+            .reverse() // Reverse the order to have the oldest date first
+            .map(date => ({
+                date,
+                upperBand: parseFloat(data['Technical Analysis: BBANDS'][date]['Real Upper Band']),
+                lowerBand: parseFloat(data['Technical Analysis: BBANDS'][date]['Real Lower Band']),
+                middleBand: parseFloat(data['Technical Analysis: BBANDS'][date]['Real Middle Band'])
+            }));
+
+        console.log("Parsed Bollinger Bands data:", bollingerData.slice(0, 5)); // Print the first 5 data points for verification
+        return bollingerData;
+    } catch (error) {
+        console.error("Error fetching Bollinger Bands data:", error);
         throw error;
     }
 }

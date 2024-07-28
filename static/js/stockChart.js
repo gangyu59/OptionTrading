@@ -2,16 +2,42 @@ function renderTrendChart(stockData) {
     const ctx = document.getElementById('candle-chart').getContext('2d');
     const labels = stockData.map(data => data.date);
     const data = stockData.map(data => data.close);
+    const upperBand = stockData.map(data => data.upperBand);
+    const lowerBand = stockData.map(data => data.lowerBand);
+    const middleBand = stockData.map(data => data.middleBand);
 
     const chartData = {
         labels: labels,
-        datasets: [{
-            label: 'Stock Price',
-            data: data,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-            fill: false,
-        }]
+        datasets: [
+            {
+                label: 'Stock Price',
+                data: data,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false,
+            },
+            {
+                label: 'Upper Band',
+                data: upperBand,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                fill: false,
+            },
+            {
+                label: 'Lower Band',
+                data: lowerBand,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                fill: false,
+            },
+            {
+                label: 'Middle Band',
+                data: middleBand,
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1,
+                fill: false,
+            }
+        ]
     };
 
     new Chart(ctx, {
@@ -66,9 +92,9 @@ function renderMACDChart(macdData) {
             {
                 label: 'Histogram',
                 data: histogram,
-                borderColor: 'rgba(75, 75, 192, 1)',
+                backgroundColor: histogram.map(value => value >= 0 ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)'),
+                borderColor: histogram.map(value => value >= 0 ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)'),
                 borderWidth: 1,
-                fill: false,
             }
         ]
     };
