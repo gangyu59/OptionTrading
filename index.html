@@ -6,6 +6,8 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="manifest" href="manifest.json">
     <script src="static/js/chart.js"></script> <!-- 使用本地的 Chart.js -->
+		<script src="static/js/chartjs-chart-financial.js"></script> 
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
@@ -23,11 +25,12 @@
     <button class="large-button" onclick="fetchData()">Get Data</button>
     <button class="large-button" onclick="getAdvice()">Get AI Advice</button>
     <div id="stock-data">
-        <canvas id="candle-chart" <canvas id="candle-chart" width="800" height="600"></canvas>
+        <canvas id="candle-chart" <canvas id="candle-chart" width="800" height="500"></canvas>
         <canvas id="macd-chart" width="800" height="200"></canvas>
         <canvas id="kdj-chart" width="800" height="200"></canvas>
     </div>
     <div id="advice"></div>
+		<div id="details"></div>
 
     <script src="static/js/fetchData.js"></script>
     <script src="static/js/stockChart.js"></script>
