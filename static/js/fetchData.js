@@ -1,12 +1,12 @@
 const API_KEY = 'OSQ403SM4KEOHQSQ';
 
 async function fetchStockData(symbol, startDate, endDate) {
-    console.log("Fetching stock data...");
+//    console.log("Fetching stock data...");
     const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&apikey=${API_KEY}&outputsize=full`;
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log("Stock data response received:", data);
+//        console.log("Stock data response received:", data);
 
         if (data.Information) {
             throw new Error(data.Information);
@@ -35,7 +35,7 @@ async function fetchStockData(symbol, startDate, endDate) {
             }
         });
 
-        console.log("Parsed stock data with Bollinger Bands:", stockData.slice(0, 5)); // Print the first 5 data points for verification
+//        console.log("Parsed stock data with Bollinger Bands:", stockData.slice(0, 5)); // Print the first 5 data points for verification
         return stockData;
     } catch (error) {
         console.error("Error fetching stock data:", error);
@@ -44,12 +44,12 @@ async function fetchStockData(symbol, startDate, endDate) {
 }
 
 async function fetchBollingerBands(symbol, startDate, endDate) {
-    console.log("Fetching Bollinger Bands data...");
+//    console.log("Fetching Bollinger Bands data...");
     const url = `https://www.alphavantage.co/query?function=BBANDS&symbol=${symbol}&interval=daily&time_period=20&series_type=close&apikey=${API_KEY}`;
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log("Bollinger Bands data response received:", data);
+  //      console.log("Bollinger Bands data response received:", data);
 
         if (data.Information) {
             throw new Error(data.Information);
@@ -65,7 +65,7 @@ async function fetchBollingerBands(symbol, startDate, endDate) {
                 middleBand: parseFloat(data['Technical Analysis: BBANDS'][date]['Real Middle Band'])
             }));
 
-        console.log("Parsed Bollinger Bands data:", bollingerData.slice(0, 5)); // Print the first 5 data points for verification
+//        console.log("Parsed Bollinger Bands data:", bollingerData.slice(0, 5)); // Print the first 5 data points for verification
         return bollingerData;
     } catch (error) {
         console.error("Error fetching Bollinger Bands data:", error);
@@ -74,12 +74,12 @@ async function fetchBollingerBands(symbol, startDate, endDate) {
 }
 
 async function fetchMACD(symbol, startDate, endDate) {
-    console.log("Fetching MACD data...");
+//    console.log("Fetching MACD data...");
     const url = `https://www.alphavantage.co/query?function=MACD&symbol=${symbol}&interval=daily&series_type=close&apikey=${API_KEY}`;
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log("MACD data response received:", data);
+//        console.log("MACD data response received:", data);
 
         if (data.Information) {
             throw new Error(data.Information);
@@ -95,7 +95,7 @@ async function fetchMACD(symbol, startDate, endDate) {
                 histogram: parseFloat(data['Technical Analysis: MACD'][date]['MACD_Hist'])
             }));
 
-        console.log("Parsed MACD data:", macdData.slice(0, 5)); // Print the first 5 data points for verification
+//        console.log("Parsed MACD data:", macdData.slice(0, 5)); // Print the first 5 data points for verification
         return macdData;
     } catch (error) {
         console.error("Error fetching MACD data:", error);
@@ -104,12 +104,12 @@ async function fetchMACD(symbol, startDate, endDate) {
 }
 
 async function fetchKDJ(symbol, startDate, endDate) {
-    console.log("Fetching KDJ data...");
+//    console.log("Fetching KDJ data...");
     const url = `https://www.alphavantage.co/query?function=STOCH&symbol=${symbol}&interval=daily&apikey=${API_KEY}`;
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log("KDJ data response received:", data);
+//        console.log("KDJ data response received:", data);
 
         if (data.Information) {
             throw new Error(data.Information);
@@ -125,10 +125,40 @@ async function fetchKDJ(symbol, startDate, endDate) {
                 j: (3 * parseFloat(data['Technical Analysis: STOCH'][date]['SlowK'])) - (2 * parseFloat(data['Technical Analysis: STOCH'][date]['SlowD']))
             }));
 
-        console.log("Parsed KDJ data:", kdjData.slice(0, 5)); // Print the first 5 data points for verification
+ //       console.log("Parsed KDJ data:", kdjData.slice(0, 5)); // Print the first 5 data points for verification
         return kdjData;
     } catch (error) {
         console.error("Error fetching KDJ data:", error);
+        throw error;
+    }
+}
+
+async function fetchOptionData(symbol, expirationDate, strikePrice, optionType) {
+    console.log("Fetching option price data...");
+    const url = `https://www.alphavantage.co/query?function=OPTION_CHAIN&symbol=${symbol}&expiration_date=${expirationDate}&strike=${strikePrice}&option_type=${optionType}&apikey=${API_KEY}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("Option price data response received:", data);
+
+        if (data.Information) {
+            throw new Error(data.Information);
+        }
+
+        const optionData = data['optionChain'];
+        const parsedOptionData = optionData.map(option => ({
+            strike: parseFloat(option['strike']),
+            lastPrice: parseFloat(option['last']),
+            bid: parseFloat(option['bid']),
+            ask: parseFloat(option['ask']),
+            volume: parseInt(option['volume']),
+            openInterest: parseInt(option['openInterest'])
+        }));
+
+        console.log("Parsed option data:", parsedOptionData.slice(0, 5)); // Print the first 5 data points for verification
+        return parsedOptionData;
+    } catch (error) {
+        console.error("Error fetching option price data:", error);
         throw error;
     }
 }

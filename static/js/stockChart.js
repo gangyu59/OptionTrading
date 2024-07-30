@@ -134,8 +134,8 @@ function renderTrendChart(stockData) {
                 }
             }]
         });
-        console.log('Chart instance:', chartInstance);
-        console.log('Chart rendered successfully');
+//        console.log('Chart instance:', chartInstance);
+//        console.log('Chart rendered successfully');
     } catch (error) {
         console.error('Error rendering chart:', error);
     }
