@@ -76,6 +76,37 @@ async function getAdvice() {
     }
 }
 
+async function simulate() {
+    const symbol = document.getElementById('symbol').value;
+    if (!symbol) {
+        alert('Please enter a stock symbol.');
+        return;
+    }
+
+    const startDate = document.getElementById('start-date').value || getLastMonthDate();
+    const endDate = document.getElementById('end-date').value || getTodayDate();
+    const initialInvestment = 10000;
+
+    try {
+        const { tradeDetails, finalValue } = await simulateTrade(symbol, startDate, endDate, initialInvestment);
+
+        let simulationDetails = `<h3>Simulation Results</h3>`;
+        simulationDetails += `<p><strong>Initial Investment:</strong> $${initialInvestment}</p>`;
+        simulationDetails += `<p><strong>Final Value:</strong> $${finalValue.toFixed(2)}</p>`;
+        simulationDetails += `<h4>Trade Details:</h4><ul>`;
+        tradeDetails.forEach(trade => {
+            simulationDetails += `<li>${trade.date}: ${trade.action} - Price: $${trade.price || 'N/A'}, Holdings: ${trade.holdings}, Cash: $${trade.cash.toFixed(2)}</li>`;
+        });
+        simulationDetails += `</ul>`;
+
+        document.getElementById('simulation').innerHTML = simulationDetails;
+
+    } catch (error) {
+        console.error("Error during simulation:", error.message);
+        document.getElementById('simulation').innerText = 'Error during simulation. Please check the console for more details.';
+    }
+}
+
 function getTodayDate() {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -89,3 +120,4 @@ function getLastMonthDate() {
 
 window.fetchData = fetchData;
 window.getAdvice = getAdvice;
+window.simulate = simulate;

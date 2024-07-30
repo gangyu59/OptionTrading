@@ -141,7 +141,6 @@ function renderTrendChart(stockData) {
     }
 }
 
-
 function renderMACDChart(macdData) {
     const ctx = document.getElementById('macd-chart').getContext('2d');
     const labels = macdData.map(data => data.date);
