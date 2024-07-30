@@ -24,6 +24,7 @@
     </div>
     <button class="large-button" onclick="fetchData()">Get Data</button>
     <button class="large-button" onclick="getAdvice()">Get AI Advice</button>
+		<button class="large-button" onclick="simulate()">Simulate Trade</button>
     <div id="stock-data">
         <canvas id="candle-chart" <canvas id="candle-chart" width="800" height="500"></canvas>
         <canvas id="macd-chart" width="800" height="200"></canvas>
@@ -31,10 +32,13 @@
     </div>
     <div id="advice"></div>
 		<div id="details"></div>
+		<div id="simulation"></div>
+    </div>
 
     <script src="static/js/fetchData.js"></script>
     <script src="static/js/stockChart.js"></script>
     <script src="static/js/generateAdvice.js"></script>
+		<script src="static/js/simulateTrade.js"></script>
     <script src="static/js/main.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
