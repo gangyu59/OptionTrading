@@ -1,3 +1,5 @@
+// static/js/main.js
+
 document.getElementById('start-date').value = getLastMonthDate();
 document.getElementById('end-date').value = getTodayDate();
 
@@ -58,14 +60,15 @@ async function getAdvice() {
         const advice = await generateAdvice(symbol, macdData, kdjData, stockData);
 //        console.log("Generated Advice:", advice);
 
-        document.getElementById('advice').innerText = advice.recommendation;
+        // document.getElementById('advice').innerText = advice.recommendation;
 
         const details = `
-            <p><strong>Recommendation:</strong> ${advice.recommendation}</p>
-            <p><strong>Strike Price:</strong> ${advice.strikePrice}</p>
-            <p><strong>Max Premium:</strong> ${advice.maxPremium}</p>
-            <p><strong>Expiration:</strong> ${advice.expiration}</p>
-            <p><strong>Option Price:</strong> ${advice.optionPrice}</p>
+						<h3>AI Results:</h3>
+            <p>Recommendation: ${advice.recommendation}</p>
+            <p>Strike Price: ${advice.strikePrice}</p>
+            <p>Max Premium: ${advice.maxPremium}</p>
+            <p>Expiration: ${advice.expiration}</p>
+            <p>Option Price:${advice.optionPrice}</p>
         `;
         document.getElementById('details').innerHTML = details;
 
@@ -90,14 +93,40 @@ async function simulate() {
     try {
         const { tradeDetails, finalValue } = await simulateTrade(symbol, startDate, endDate, initialInvestment);
 
-        let simulationDetails = `<h3>Simulation Results</h3>`;
-        simulationDetails += `<p><strong>Initial Investment:</strong> $${initialInvestment}</p>`;
-        simulationDetails += `<p><strong>Final Value:</strong> $${finalValue.toFixed(2)}</p>`;
-        simulationDetails += `<h4>Trade Details:</h4><ul>`;
+        let simulationDetails = `
+            <h3>Simulation Results:</h3>
+            <p>Initial Investment: $${initialInvestment.toFixed(2)}</p>
+            <p>Final Value: $${finalValue.toFixed(2)}</p>
+            <p>Total Return: $${(finalValue - initialInvestment).toFixed(2)}</p>
+            <h3>Trade Details:</h3>
+            <table border="1">
+                <tr>
+                    <th>Date</th>
+                    <th>Action</th>
+                    <th>Price</th>
+                    <th>Trade Units</th>
+                    <th>Holdings</th>
+                    <th>Value in Hand</th>
+                    <th>Decision Base</th>
+                </tr>
+        `;
+
         tradeDetails.forEach(trade => {
-            simulationDetails += `<li>${trade.date}: ${trade.action} - Price: $${trade.price || 'N/A'}, Holdings: ${trade.holdings}, Cash: $${trade.cash.toFixed(2)}</li>`;
+            const price = trade.price !== undefined ? `$${trade.price.toFixed(2)}` : 'N/A';
+            simulationDetails += `
+                <tr>
+                    <td>${trade.date}</td>
+                    <td>${trade.action}</td>
+                    <td>${price}</td>
+                    <td>${trade.units || 'N/A'}</td>
+                    <td>${trade.holdings}</td>
+                    <td>$${trade.cash.toFixed(2)}</td>
+                    <td>${trade.decisionBase}</td>
+                </tr>
+            `;
         });
-        simulationDetails += `</ul>`;
+
+        simulationDetails += `</table>`;
 
         document.getElementById('simulation').innerHTML = simulationDetails;
 

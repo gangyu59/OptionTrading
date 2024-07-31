@@ -1,3 +1,5 @@
+// static/js/simulateTrade.js
+
 async function simulateTrade(symbol, startDate, endDate, initialInvestment) {
     let cash = initialInvestment;
     let holdings = 0;
@@ -20,19 +22,53 @@ async function simulateTrade(symbol, startDate, endDate, initialInvestment) {
                 const units = Math.floor(cash / advice.optionPrice);
                 holdings += units;
                 cash -= units * advice.optionPrice;
-                tradeDetails.push({ date: currentDate, action: "Buy Call Option", price: advice.optionPrice, holdings, cash });
+                tradeDetails.push({
+                    date: currentDate,
+                    action: "Buy Call Option",
+                    price: advice.optionPrice,
+                    units,
+                    holdings,
+                    cash,
+                    decisionBase: "Buy Call Option based on MACD and KDJ indicators"
+                });
             } else if (advice.recommendation === "Buy Put Option" && cash >= advice.optionPrice) {
                 const units = Math.floor(cash / advice.optionPrice);
                 holdings += units;
                 cash -= units * advice.optionPrice;
-                tradeDetails.push({ date: currentDate, action: "Buy Put Option", price: advice.optionPrice, holdings, cash });
+                tradeDetails.push({
+                    date: currentDate,
+                    action: "Buy Put Option",
+                    price: advice.optionPrice,
+                    units,
+                    holdings,
+                    cash,
+                    decisionBase: "Buy Put Option based on MACD and KDJ indicators"
+                });
             } else {
-                tradeDetails.push({ date: currentDate, action: "Hold", holdings, cash });
+                tradeDetails.push({
+                    date: currentDate,
+                    action: "Hold",
+                    holdings,
+                    cash,
+                    decisionBase: "Market conditions not favorable"
+                });
             }
         }
 
-        const finalValue = cash + (holdings * stockData[stockData.length - 1].close);
-        return { tradeDetails, finalValue };
+        // 卖出所有持有的期权
+        const lastStockPrice = stockData[stockData.length - 1].close;
+        const totalValue = cash + (holdings * lastStockPrice);
+        tradeDetails.push({
+            date: endDate,
+            action: "Sell All Holdings",
+            price: lastStockPrice,
+            units: holdings,
+            holdings: 0,
+            cash: totalValue,
+            decisionBase: "End of simulation, sell all holdings"
+        });
+
+        return { tradeDetails, finalValue: totalValue };
     } catch (error) {
         console.error("Error during simulation:", error.message);
         console.error(error.stack);
