@@ -9,12 +9,14 @@
 		<script src="static/js/chartjs-chart-financial.js"></script> 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> <!-- 添加TensorFlow.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script> <!-- 添加TensorFlow.js可视化库 -->
 </head>
 <body>
     <h1>Option Trading Advisor</h1>
     <div>
         <label for="symbol">Stock Symbol:</label>
-        <input type="text" id="symbol" value="NVDA" placeholder="Enter stock symbol (e.g., NVDA)">
+        <input type="text" id="symbol" value="NVDA" placeholder="Enter stock symbol">
     </div>
     <div>
         <label for="start-date">Start Date:</label>
@@ -25,20 +27,28 @@
     <button class="large-button" onclick="fetchData()">Get Data</button>
     <button class="large-button" onclick="getAdvice()">Get AI Advice</button>
 		<button class="large-button" onclick="simulate()">Simulate Trade</button>
-    <div id="stock-data">
-        <canvas id="candle-chart" <canvas id="candle-chart" width="800" height="500"></canvas>
-        <canvas id="macd-chart" width="800" height="200"></canvas>
-        <canvas id="kdj-chart" width="800" height="200"></canvas>
-    </div>
+		<button class="large-button" onclick="getRecommendation()">Get Recommendation</button>
+		<div id="stock-data">
+		    <canvas id="candle-chart" width="800" height="350"></canvas>
+		    <canvas id="macd-chart" width="800" height="180"></canvas>
+		    <canvas id="kdj-chart" width="800" height="180"></canvas>
+		    <canvas id="rsi-chart" width="800" height="180"></canvas>
+		    <canvas id="ma-chart" width="800" height="180"></canvas>
+		    <canvas id="atr-chart" width="800" height="180"></canvas>
+		    <canvas id="adx-chart" width="800" height="180"></canvas>
+		    <canvas id="stochastic-chart" width="800" height="180"></canvas>
+		</div>
     <div id="advice"></div>
 		<div id="details"></div>
 		<div id="simulation"></div>
+		<div id="recommendation"></div>
     </div>
 
     <script src="static/js/fetchData.js"></script>
     <script src="static/js/stockChart.js"></script>
     <script src="static/js/generateAdvice.js"></script>
 		<script src="static/js/simulateTrade.js"></script>
+		<script src="static/js/recommendation.js"></script>
     <script src="static/js/main.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
