@@ -3,6 +3,14 @@
 let symbol;
 let startDate;
 let endDate;
+let stockData;
+let macdData;
+let kdjData;
+let rsiData;
+let maData;
+let atrData;
+let adxData;
+let stochasticData;
 
 function setGlobalVariables() {
     symbol = document.getElementById('symbol').value;
@@ -27,19 +35,32 @@ function getLastMonthDate() {
     return lastMonth.toISOString().split('T')[0];
 }
 
-async function fetchData() {
+async function fetchAllData() {
 		if (!setGlobalVariables()) {
         return;
     }
-		try {
-        const stockData = await fetchStockData(symbol, startDate, endDate);
-        const macdData = await fetchMACD(symbol, startDate, endDate);
-        const kdjData = await fetchKDJ(symbol, startDate, endDate);
-        const rsiData = await fetchRSI(symbol, startDate, endDate);
-        const maData = await fetchMA(symbol, startDate, endDate);
-        const atrData = await fetchATR(symbol, startDate, endDate);
-        const adxData = await fetchADX(symbol, startDate, endDate);
-        const stochasticData = await fetchStochastic(symbol, startDate, endDate);
+    try {
+        stockData = await fetchStockData(symbol, startDate, endDate);
+        macdData = await fetchMACD(symbol, startDate, endDate);
+        kdjData = await fetchKDJ(symbol, startDate, endDate);
+        rsiData = await fetchRSI(symbol, startDate, endDate);
+        maData = await fetchMA(symbol, startDate, endDate);
+        atrData = await fetchATR(symbol, startDate, endDate);
+        adxData = await fetchADX(symbol, startDate, endDate);
+        stochasticData = await fetchStochastic(symbol, startDate, endDate);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+    }
+}
+
+async function fetchData() {
+    if (!setGlobalVariables()) {
+        return;
+    }
+
+    try {
+        await fetchAllData();
 
         renderTrendChart(stockData);
         renderMACDChart(macdData);
@@ -55,26 +76,22 @@ async function fetchData() {
 }
 
 async function getAdvice() {
-//    console.log("Getting advice...");
-		if (!setGlobalVariables()) {
+    if (!setGlobalVariables()) {
         return;
     }
+
     try {
-        const macdData = await fetchMACD(symbol, startDate, endDate);
-        
-        const kdjData = await fetchKDJ(symbol, startDate, endDate);
-        
-        const stockData = await fetchStockData(symbol, startDate, endDate);
-        
+        await fetchAllData();
+
         const advice = await generateAdvice(symbol, macdData, kdjData, stockData);
-				
+
         const details = `
-						<h3>AI Results:</h3>
+            <h3>AI Results:</h3>
             <p>Recommendation: ${advice.recommendation}</p>
             <p>Strike Price: ${advice.strikePrice}</p>
             <p>Max Premium: ${advice.maxPremium}</p>
             <p>Expiration: ${advice.expiration}</p>
-            <p>Option Price:${advice.optionPrice}</p>
+            <p>Option Price: ${advice.optionPrice}</p>
         `;
         document.getElementById('details').innerHTML = details;
 
@@ -86,11 +103,15 @@ async function getAdvice() {
 }
 
 async function simulate() {
-    const initialInvestment = 10000;
-		if (!setGlobalVariables()) {
+    if (!setGlobalVariables()) {
         return;
     }
-	  try {
+
+    const initialInvestment = 10000;
+
+    try {
+        await fetchAllData();
+
         const { tradeDetails, finalValue } = await simulateTrade(symbol, startDate, endDate, initialInvestment);
 
         let simulationDetails = `
@@ -130,7 +151,7 @@ async function simulate() {
 
         simulationDetails += `</table>`;
 
-	    document.getElementById('simulation').innerHTML = simulationDetails;
+        document.getElementById('simulation').innerHTML = simulationDetails;
 
     } catch (error) {
         console.error("Error during simulation:", error.message);
@@ -142,15 +163,9 @@ async function getRecommendation() {
     if (!setGlobalVariables()) {
         return;
     }
-		try {
-        const stockData = await fetchStockData(symbol, startDate, endDate);
-        const macdData = await fetchMACD(symbol, startDate, endDate);
-        const kdjData = await fetchKDJ(symbol, startDate, endDate);
-        const rsiData = await fetchRSI(symbol, startDate, endDate);
-        const maData = await fetchMA(symbol, startDate, endDate);
-        const atrData = await fetchATR(symbol, startDate, endDate);
-        const adxData = await fetchADX(symbol, startDate, endDate);
-        const stochasticData = await fetchStochastic(symbol, startDate, endDate);
+
+    try {
+        await fetchAllData();
 
         const recommendations = {
             bollinger: getBollingerBandsRecommendation(stockData),
@@ -209,6 +224,7 @@ async function getRecommendation() {
 }
 
 window.fetchData = fetchData;
+window.fetchAllData = fetchAllData;
 window.getAdvice = getAdvice;
 window.simulate = simulate;
 window.getRecommendation = getRecommendation;
