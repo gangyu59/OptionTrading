@@ -36,7 +36,16 @@ canvas {
 
 #dynamic-chart-container {
     width: 800px;
-    height: 250px;
+    height: 200px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#dynamic-chart {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 #dynamic-chart {
