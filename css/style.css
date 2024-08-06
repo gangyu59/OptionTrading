@@ -3,7 +3,7 @@ body {
 }
 
 .large-button {
-    font-size: 1.2em;
+    font-size: 1.5em;
     padding: 10px 20px;
     margin: 10px;
 }
@@ -19,15 +19,37 @@ canvas {
     border: 1px solid #ccc;
 }
 
-
 #candle-chart {
-    height: 400px; /* 主图高度增加 */
+    height: 500px; /* 主图高度增加 */
+    width: 800px;
 }
 
 #macd-chart {
     height: 200px; /* MACD 图高度降低 */
+    width: 800px;
 }
 
 #kdj-chart {
     height: 200px; /* KDJ 图高度降低 */
+    width: 800px;
+}
+
+#dynamic-chart-container {
+    width: 800px;
+    height: 250px;
+}
+
+#dynamic-chart {
+    width: 100%;
+    height: 100%;
+}
+
+label {
+    font-size: 150%;
+}
+
+input[type="text"],
+input[type="date"] {
+    font-size: 150%;
+    padding: 0.5em;
 }
