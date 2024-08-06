@@ -12,6 +12,10 @@ let atrData;
 let adxData;
 let stochasticData;
 
+let chartIndex = 0;
+const charts = ['volume', 'rsi', 'ma', 'atr', 'adx', 'stochastic'];
+let allData;
+
 function setGlobalVariables() {
     symbol = document.getElementById('symbol').value;
     if (!symbol) {
@@ -31,12 +35,22 @@ function getTodayDate() {
 
 function getLastMonthDate() {
     const today = new Date();
-    const lastMonth = new Date(today.setMonth(today.getMonth() - 1));
+    const lastMonth = new Date(today.setMonth(today.getMonth() - 2));
     return lastMonth.toISOString().split('T')[0];
 }
 
+function setDefault() {
+    document.getElementById('symbol').value = 'MSFT';
+    document.getElementById('start-date').value = getLastMonthDate();
+    document.getElementById('end-date').value = getTodayDate();
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    setDefault();
+});
+
 async function fetchAllData() {
-		if (!setGlobalVariables()) {
+    if (!setGlobalVariables()) {
         return;
     }
     try {
@@ -48,6 +62,23 @@ async function fetchAllData() {
         atrData = await fetchATR(symbol, startDate, endDate);
         adxData = await fetchADX(symbol, startDate, endDate);
         stochasticData = await fetchStochastic(symbol, startDate, endDate);
+
+        const combinedData = stockData.map((data, index) => ({
+            ...data,
+            macd: macdData[index] ? macdData[index].macd : null,
+            macdSignal: macdData[index] ? macdData[index].signal : null,
+            k: kdjData[index] ? kdjData[index].k : null,
+            d: kdjData[index] ? kdjData[index].d : null,
+            rsi: rsiData[index] ? rsiData[index].rsi : null,
+            ma20: maData[index] ? maData[index].ma : null,
+            atr: atrData[index] ? atrData[index].atr : null,
+            adx: adxData[index] ? adxData[index].adx : null,
+            slowK: stochasticData[index] ? stochasticData[index].slowK : null,
+            slowD: stochasticData[index] ? stochasticData[index].slowD : null
+        }));
+
+//        console.log("Combined data fetched:", combinedData); // 调试信息
+        return combinedData;
     } catch (error) {
         console.error("Error fetching data:", error);
         throw error;
@@ -60,18 +91,53 @@ async function fetchData() {
     }
 
     try {
-        await fetchAllData();
+        const data = await fetchAllData();
+        allData = data;
 
         renderTrendChart(stockData);
         renderMACDChart(macdData);
         renderKDJChart(kdjData);
-        renderRSIChart(rsiData);
-        renderMAChart(maData);
-        renderATRChart(atrData);
-        renderADXChart(adxData);
-        renderStochasticChart(stochasticData);
+        renderVolumeChart(stockData); // 初始显示 volume 图表
+				document.getElementById('dynamic-chart-container').addEventListener('touchstart', renderNextChart);
     } catch (error) {
         console.error("Error fetching data:", error);
+    }
+}
+
+function renderNextChart() {
+    chartIndex = (chartIndex + 1) % charts.length;
+    const currentChart = charts[chartIndex];
+
+    const dynamicChartContainer = document.getElementById('dynamic-chart-container');
+    dynamicChartContainer.innerHTML = ''; // 清空旧图表
+
+    const newCanvas = document.createElement('canvas');
+    newCanvas.id = 'dynamic-chart';
+    newCanvas.width = 800;
+    newCanvas.height = 180;
+  	dynamicChartContainer.appendChild(newCanvas);
+
+    const ctx = newCanvas.getContext('2d');
+//    console.log('Canvas context:', ctx); // 添加调试信息
+
+    switch (currentChart) {
+        case 'volume':
+            renderVolumeChart(stockData);
+            break;
+        case 'rsi':
+            renderRSIChart(rsiData);
+            break;
+        case 'ma':
+            renderMAChart(maData);
+            break;
+        case 'atr':
+            renderATRChart(atrData);
+            break;
+        case 'adx':
+            renderADXChart(adxData);
+            break;
+        case 'stochastic':           renderStochasticChart(stochasticData);
+            break;
     }
 }
 
@@ -81,7 +147,7 @@ async function getAdvice() {
     }
 
     try {
-        await fetchAllData();
+        const data = await fetchAllData();
 
         const advice = await generateAdvice(symbol, macdData, kdjData, stockData);
 
@@ -110,7 +176,7 @@ async function simulate() {
     const initialInvestment = 10000;
 
     try {
-        await fetchAllData();
+        const data = await fetchAllData();
 
         const { tradeDetails, finalValue } = await simulateTrade(symbol, startDate, endDate, initialInvestment);
 
@@ -165,7 +231,7 @@ async function getRecommendation() {
     }
 
     try {
-        await fetchAllData();
+        const data = await fetchAllData();
 
         const recommendations = {
             bollinger: getBollingerBandsRecommendation(stockData),

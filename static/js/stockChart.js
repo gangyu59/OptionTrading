@@ -244,7 +244,232 @@ function renderKDJChart(kdjData) {
             responsive: true,
             scales: {
                 x: {
-                    display: true, // 暂时保留X轴
+                    display: false // 暂时保留X轴
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Value'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderRSIChart(rsiData) {
+    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+    const labels = rsiData.map(data => data.date);
+    const rsi = rsiData.map(data => data.rsi);
+
+    const chartData = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'RSI',
+                data: rsi,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }
+        ]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+		                display: true,
+		                title: {
+		                    display: true,
+		                    text: 'Date'
+		                }
+		            },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Value'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderMAChart(maData) {
+    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+    const labels = maData.map(data => data.date);
+    const ma = maData.map(data => data.ma);
+
+    const chartData = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'MA',
+                data: ma,
+                borderColor: 'rgba(192, 75, 75, 1)',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }
+        ]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+		                display: true,
+		                title: {
+		                    display: true,
+		                    text: 'Date'
+		                }
+		            },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Value'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderATRChart(atrData) {
+    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+    const labels = atrData.map(data => data.date);
+    const atr = atrData.map(data => data.atr);
+
+    const chartData = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'ATR',
+                data: atr,
+                borderColor: 'rgba(75, 75, 192, 1)',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }
+        ]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+		                display: true,
+		                title: {
+		                    display: true,
+		                    text: 'Date'
+		                }
+		            },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Value'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderADXChart(adxData) {
+    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+    const labels = adxData.map(data => data.date);
+    const adx = adxData.map(data => data.adx);
+
+    const chartData = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'ADX',
+                data: adx,
+                borderColor: 'rgba(192, 192, 75, 1)',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }
+        ]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+		                display: true,
+		                title: {
+		                    display: true,
+		                    text: 'Date'
+		                }
+            		},
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Value'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderStochasticChart(stochasticData) {
+    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+    const labels = stochasticData.map(data => data.date);
+    const slowK = stochasticData.map(data => data.slowK);
+    const slowD = stochasticData.map(data => data.slowD);
+
+    const chartData = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'SlowK',
+                data: slowK,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            },
+            {
+                label: 'SlowD',
+                data: slowD,
+                borderColor: 'rgba(192, 75, 75, 1)',
+                borderWidth: 1,
+                fill: false,
+                pointRadius: 0
+            }
+        ]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    display: true,
                     title: {
                         display: true,
                         text: 'Date'
@@ -259,5 +484,63 @@ function renderKDJChart(kdjData) {
                 }
             }
         }
+    });
+}
+
+function renderVolumeChart(stockData) {
+    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+    const labels = stockData.map(data => data.date);
+    const volume = stockData.map(data => data.volume);
+
+    const chartData = {
+        labels: labels,
+        datasets: [
+            {
+                type: 'bar',
+                label: 'Volume',
+                data: volume,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }
+        ]
+    };
+
+    const chartOptions = {
+        responsive: true,
+        scales: {
+            x: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Date'
+                }
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Volume'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        return `Volume: ${context.raw}`;
+                    }
+                }
+            }
+        }
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+        options: chartOptions
     });
 }
