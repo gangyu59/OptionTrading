@@ -40,7 +40,7 @@ function getLastMonthDate() {
 }
 
 function setDefault() {
-    document.getElementById('symbol').value = 'MSFT';
+    document.getElementById('symbol').value = 'NVDA';
     document.getElementById('start-date').value = getLastMonthDate();
     document.getElementById('end-date').value = getTodayDate();
 }
@@ -113,12 +113,16 @@ function renderNextChart() {
 
     const newCanvas = document.createElement('canvas');
     newCanvas.id = 'dynamic-chart';
+    dynamicChartContainer.appendChild(newCanvas);
+
+    // 设置canvas的宽高
+    newCanvas.style.width = '800px';
+    newCanvas.style.height = '180px';
     newCanvas.width = 800;
     newCanvas.height = 180;
-  	dynamicChartContainer.appendChild(newCanvas);
 
     const ctx = newCanvas.getContext('2d');
-//    console.log('Canvas context:', ctx); // 添加调试信息
+
 
     switch (currentChart) {
         case 'volume':
@@ -250,38 +254,51 @@ async function getRecommendation() {
         const transformerRecommendation = await getTransformerRecommendation(symbol, startDate, endDate);
 
         let recommendationDetails = `
-            <h3>Recommendations:</h3>
-            <table border="1">
-                <tr>
-                    <th>Indicator</th>
-                    <th>Bollinger Bands</th>
-                    <th>MACD</th>
-                    <th>KDJ</th>
-                    <th>RSI</th>
-                    <th>MA</th>
-                    <th>ATR</th>
-                    <th>ADX</th>
-                    <th>Stochastic</th>
-                    <th>Overall</th>
-                    <th>Total Score</th>
-                    <th>Transformer Advice</th>
-                </tr>
-                <tr>
-                    <td>Recommendation</td>
-                    <td>${recommendations.bollinger}</td>
-                    <td>${recommendations.macd}</td>
-                    <td>${recommendations.kdj}</td>
-                    <td>${recommendations.rsi}</td>
-                    <td>${recommendations.ma}</td>
-                    <td>${recommendations.atr}</td>
-                    <td>${recommendations.adx}</td>
-                    <td>${recommendations.stochastic}</td>
-                    <td>${overallRecommendation}</td>
-                    <td>${totalScore}</td>
-                    <td>${transformerRecommendation}</td>
-                </tr>
-            </table>
-        `;
+    <h3 style="text-align:center;">Recommendations:</h3>
+    <table border="1" style="width: 100%; text-align: center;">
+        <tr>
+            <th>Indicator</th>
+            <th>Bollinger Bands</th>
+            <th>MACD</th>
+            <th>KDJ</th>
+            <th>RSI</th>
+            <th>MA</th>
+            <th>ATR</th>
+            <th>ADX</th>
+            <th>Stochastic</th>
+            <th>Overall</th>
+            <th>Total Score</th>
+            <th>Transformer Advice</th>
+        </tr>
+        <tr>
+            <td><b>Recommendation</b></td>
+            <td style="color:${getColor(recommendations.bollinger)};">${recommendations.bollinger}</td>
+            <td style="color:${getColor(recommendations.macd)};">${recommendations.macd}</td>
+            <td style="color:${getColor(recommendations.kdj)};">${recommendations.kdj}</td>
+            <td style="color:${getColor(recommendations.rsi)};">${recommendations.rsi}</td>
+            <td style="color:${getColor(recommendations.ma)};">${recommendations.ma}</td>
+            <td style="color:${getColor(recommendations.atr)};">${recommendations.atr}</td>
+            <td style="color:${getColor(recommendations.adx)};">${recommendations.adx}</td>
+            <td style="color:${getColor(recommendations.stochastic)};">${recommendations.stochastic}</td>
+            <td style="color:${getColor(overallRecommendation)};">${overallRecommendation}</td>
+            <td>${totalScore}</td>
+            <td style="color:${getColor(transformerRecommendation)};">${transformerRecommendation}</td>
+        </tr>
+    </table>
+`;
+
+function getColor(recommendation) {
+    switch (recommendation) {
+        case 'Buy':
+            return 'green';
+        case 'Sell':
+            return 'red';
+        case 'Hold':
+            return 'black';
+        default:
+            return 'black';
+    }
+}
         document.getElementById('recommendation').innerHTML = recommendationDetails;
     } catch (error) {
         console.error("Error fetching data:", error);

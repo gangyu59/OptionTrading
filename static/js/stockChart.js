@@ -490,14 +490,14 @@ function renderStochasticChart(stochasticData) {
 function renderVolumeChart(stockData) {
     const ctx = document.getElementById('dynamic-chart').getContext('2d');
     const labels = stockData.map(data => data.date);
-    const volume = stockData.map(data => data.volume);
+    const volume = stockData.map(data => data.volume / 1000000); // 以百万为单位
 
     const chartData = {
         labels: labels,
         datasets: [
             {
                 type: 'bar',
-                label: 'Volume',
+                label: 'Volume', // 在标签中注明
                 data: volume,
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -520,7 +520,7 @@ function renderVolumeChart(stockData) {
                 beginAtZero: true,
                 title: {
                     display: true,
-                    text: 'Volume'
+                    text: 'Volume (x million)' // 轴标签注明
                 }
             }
         },
@@ -531,7 +531,7 @@ function renderVolumeChart(stockData) {
             tooltip: {
                 callbacks: {
                     label: function (context) {
-                        return `Volume: ${context.raw}`;
+                        return `Volume: ${context.raw}M`; // 提示框中显示以千为单位的值
                     }
                 }
             }
