@@ -8,7 +8,7 @@ body {
     margin: 10px;
 }
 
-#stock-data {
+#stock-data, #option-data {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,22 +19,22 @@ canvas {
     border: 1px solid #ccc;
 }
 
-#candle-chart {
+#stock-candle-chart, #option-candle-chart {
     height: 500px; /* 主图高度增加 */
     width: 800px;
 }
 
-#macd-chart {
+#stock-macd-chart, #option-macd-chart {
     height: 200px; /* MACD 图高度降低 */
     width: 800px;
 }
 
-#kdj-chart {
+#stock-kdj-chart, #option-kdj-chart {
     height: 200px; /* KDJ 图高度降低 */
     width: 800px;
 }
 
-#dynamic-chart-container {
+#stock-dynamic-chart-container, #option-dynamic-chart-container {
     width: 800px;
     height: 200px;
     position: relative;
@@ -43,14 +43,9 @@ canvas {
     justify-content: center;
 }
 
-#dynamic-chart {
+#stock-dynamic-chart, #option-dynamic-chart {
     width: 100% !important;
     height: 100% !important;
-}
-
-#dynamic-chart {
-    width: 100%;
-    height: 100%;
 }
 
 label {
@@ -63,7 +58,7 @@ input[type="date"] {
     padding: 0.5em;
 }
 
-#hourglass {
+#stock-hourglass, #option-hourglass {
     display: none;
     font-size: 200px; /* 放大五倍 */
     position: fixed;
