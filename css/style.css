@@ -72,3 +72,32 @@ input[type="date"] {
     transform: translate(-50%, -50%);
     z-index: 1000; /* 确保在最上层 */
 }
+
+/* Tab styles */
+.tab {
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+    background-color: #f1f1f1;
+    font-size: 2em; /* 放大字体 */
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 1em; /* 放大字体 */
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    background-color: white;
+    border-bottom: 2px solid #007bff;
+    font-weight: bold;
+}
