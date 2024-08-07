@@ -89,6 +89,8 @@ async function fetchData() {
     if (!setGlobalVariables()) {
         return;
     }
+		// 显示沙漏图标
+	document.getElementById('hourglass').style.display = 'block';
 
     try {
         const data = await fetchAllData();
@@ -101,6 +103,9 @@ async function fetchData() {
 				document.getElementById('dynamic-chart-container').addEventListener('touchstart', renderNextChart);
     } catch (error) {
         console.error("Error fetching data:", error);
+    }finally {
+        // 隐藏沙漏图标
+        document.getElementById('hourglass').style.display = 'none';
     }
 }
 
@@ -149,7 +154,9 @@ async function getAdvice() {
     if (!setGlobalVariables()) {
         return;
     }
-
+		// 显示沙漏图标
+	document.getElementById('hourglass').style.display = 'block';
+	
     try {
         const data = await fetchAllData();
 
@@ -169,6 +176,9 @@ async function getAdvice() {
         console.error("Error getting advice:", error);
         document.getElementById('advice').innerText = 'Error generating advice. Please check the console for more details.';
         document.getElementById('details').innerHTML = '';
+    }finally {
+        // 隐藏沙漏图标
+        document.getElementById('hourglass').style.display = 'none';
     }
 }
 
@@ -176,7 +186,9 @@ async function simulate() {
     if (!setGlobalVariables()) {
         return;
     }
-
+		// 显示沙漏图标
+	document.getElementById('hourglass').style.display = 'block';
+	
     const initialInvestment = 10000;
 
     try {
@@ -226,6 +238,9 @@ async function simulate() {
     } catch (error) {
         console.error("Error during simulation:", error.message);
         document.getElementById('simulation').innerText = 'Error during simulation. Please check the console for more details.';
+    }finally {
+        // 隐藏沙漏图标
+        document.getElementById('hourglass').style.display = 'none';
     }
 }
 
@@ -233,7 +248,9 @@ async function getRecommendation() {
     if (!setGlobalVariables()) {
         return;
     }
-
+		// 显示沙漏图标
+	document.getElementById('hourglass').style.display = 'block';
+	
     try {
         const data = await fetchAllData();
 
@@ -303,6 +320,9 @@ function getColor(recommendation) {
     } catch (error) {
         console.error("Error fetching data:", error);
         document.getElementById('recommendation').innerText = 'Error generating recommendations. Please check the console for more details.';
+    }finally {
+        // 隐藏沙漏图标
+        document.getElementById('hourglass').style.display = 'none';
     }
 }
 
