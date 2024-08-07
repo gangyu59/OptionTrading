@@ -2,50 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Option Trading Advisor</title>
+    <title>Trading Advisor</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="manifest" href="manifest.json">
     <script src="static/js/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> <!-- 添加TensorFlow.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> <!-- 添加TensorFlow.js库 -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script> <!-- 添加TensorFlow.js可视化库 -->
 </head>
 <body>
-    <div>
-        <label for="symbol">Stock Symbol:</label>
-        <input type="text" id="symbol" value="NVDA" placeholder="Enter stock symbol">
-    </div>
-    <div>
-        <label for="start-date">Start Date:</label>
-        <input type="date" id="start-date">
-        <label for="end-date">End Date:</label>
-        <input type="date" id="end-date">
-    </div>
-    <button class="large-button" onclick="fetchData()">获取/展示数据</button>
-    <button class="large-button" onclick="getAdvice()">期权交易建议</button>
-		<button class="large-button" onclick="simulate()">期权交易模拟</button>
-		<button class="large-button" onclick="getRecommendation()">股票交易推荐</button>
-		<div id="hourglass" style="display: none; font-size: 120px;">⏳</div>
-		<div id="stock-data">
-		    <canvas id="candle-chart" width="800" height="350"></canvas>
-		    <canvas id="macd-chart" width="800" height="160"></canvas>
-		    <canvas id="kdj-chart" width="800" height="160"></canvas>
-				<div id="dynamic-chart-container" style="width: 960px; height: 200px;">
-        		<canvas id="dynamic-chart" width="800" height="200"></canvas>
-    		</div>
+    <div class="tab">
+		    <button class="tablinks active" id="stock-trading-tab" onclick="showTab('stock-trading')">Stock Trading</button>
+		    <button class="tablinks" id="option-trading-tab" onclick="showTab('option-trading')">Option Trading</button>
 		</div>
-    <div id="recommendation"></div>
-    <div id="advice"></div>
-		<div id="details"></div>
-		<div id="simulation"></div>
+    
+    <div id="stock-trading" class="tab-content">
+        <!-- Stock Trading Content -->
+        <h1>Trading Advisor</h1>
+        <div>
+            <label for="symbol">Stock Symbol:</label>
+            <input type="text" id="symbol" value="NVDA" placeholder="Enter stock symbol">
+        </div>
+        <div>
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date">
+            <label for="end-date">End Date:</label>
+            <input type="date" id="end-date">
+        </div>
+        <button class="large-button" onclick="fetchData()">获取/展示数据</button>
+        <button class="large-button" onclick="getRecommendation()">股票交易推荐</button>
+        <div id="stock-data">
+            <canvas id="candle-chart" width="800" height="350"></canvas>
+            <canvas id="macd-chart" width="800" height="160"></canvas>
+            <canvas id="kdj-chart" width="800" height="160"></canvas>
+            <div id="dynamic-chart-container" style="width: 960px; height: 200px;">
+                <canvas id="dynamic-chart" width="800" height="200"></canvas>
+            </div>
+        </div>
+        <div id="recommendation"></div>
+        <div id="hourglass" style="display: none; font-size: 200px;">⏳</div>
+    </div>
+
+    <div id="option-trading" class="tab-content" style="display:none;">
+        <!-- Option Trading Content -->
+        <h1>Trading Advisor</h1>
+        <div>
+            <label for="symbol">Stock Symbol:</label>
+            <input type="text" id="symbol" value="NVDA" placeholder="Enter stock symbol">
+        </div>
+        <div>
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date">
+            <label for="end-date">End Date:</label>
+            <input type="date" id="end-date">
+        </div>
+        <button class="large-button" onclick="fetchData()">获取/展示数据</button>
+        <button class="large-button" onclick="getAdvice()">期权交易建议</button>
+        <button class="large-button" onclick="simulate()">期权交易模拟</button>
+        <div id="stock-data">
+            <canvas id="candle-chart" width="800" height="350"></canvas>
+            <canvas id="macd-chart" width="800" height="160"></canvas>
+            <canvas id="kdj-chart" width="800" height="160"></canvas>
+            <div id="dynamic-chart-container" style="width: 960px; height: 200px;">
+                <canvas id="dynamic-chart" width="800" height="200"></canvas>
+            </div>
+        </div>
+        <div id="advice"></div>
+        <div id="simulation"></div>
+        <div id="hourglass" style="display: none; font-size: 200px;">⏳</div>
     </div>
 
     <script src="static/js/fetchData.js"></script>
     <script src="static/js/stockChart.js"></script>
+    <script src="static/js/resultDisplay.js"></script>
     <script src="static/js/generateAdvice.js"></script>
-		<script src="static/js/simulateTrade.js"></script>
-		<script src="static/js/transformer.js"></script>
-		<script src="static/js/recommendation.js"></script>
+    <script src="static/js/simulateTrade.js"></script>
+    <script src="static/js/transformer.js"></script>
+    <script src="static/js/recommendation.js"></script>
     <script src="static/js/main.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
