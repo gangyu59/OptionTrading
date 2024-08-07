@@ -62,3 +62,13 @@ input[type="date"] {
     font-size: 150%;
     padding: 0.5em;
 }
+
+#hourglass {
+    display: none;
+    font-size: 200px; /* 放大五倍 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000; /* 确保在最上层 */
+}
