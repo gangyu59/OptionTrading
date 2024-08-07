@@ -10,6 +10,7 @@ const urlsToCache = [
     '/static/js/chart.js',
     '/static/js/fetchData.js',
     '/static/js/stockChart.js',
+		'/static/js/resultDisplay.js',
     '/static/js/generateAdvice.js',
     '/static/js/simulateTrade.js',
     '/static/js/transformer.js',
