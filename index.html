@@ -12,64 +12,62 @@
 </head>
 <body>
     <div class="tab">
-		    <button class="tablinks active" id="stock-trading-tab" onclick="showTab('stock-trading')">Stock Trading</button>
-		    <button class="tablinks" id="option-trading-tab" onclick="showTab('option-trading')">Option Trading</button>
-		</div>
-    
-    <div id="stock-trading" class="tab-content">
+        <button class="tablinks" id="stock-trading-tab" onclick="showTab('stock-trading')">Stock Trading</button>
+        <button class="tablinks" id="option-trading-tab" onclick="showTab('option-trading')">Option Trading</button>
+    </div>
+    <div id="stock-trading" class="tab-content active">
         <!-- Stock Trading Content -->
-        <h1>Trading Advisor</h1>
+        <br>
         <div>
-            <label for="symbol">Stock Symbol:</label>
-            <input type="text" id="symbol" value="NVDA" placeholder="Enter stock symbol">
+            <label for="stock-symbol">Stock Symbol:</label>
+            <input type="text" id="stock-symbol" value="NVDA" placeholder="Enter stock symbol">
         </div>
         <div>
-            <label for="start-date">Start Date:</label>
-            <input type="date" id="start-date">
-            <label for="end-date">End Date:</label>
-            <input type="date" id="end-date">
+            <label for="stock-start-date">Start Date:</label>
+            <input type="date" id="stock-start-date">
+            <label for="stock-end-date">End Date:</label>
+            <input type="date" id="stock-end-date">
         </div>
-        <button class="large-button" onclick="fetchData()">获取/展示数据</button>
+        <button class="large-button" onclick="fetchData('stock')">获取/展示数据</button>
         <button class="large-button" onclick="getRecommendation()">股票交易推荐</button>
         <div id="stock-data">
-            <canvas id="candle-chart" width="800" height="350"></canvas>
-            <canvas id="macd-chart" width="800" height="160"></canvas>
-            <canvas id="kdj-chart" width="800" height="160"></canvas>
-            <div id="dynamic-chart-container" style="width: 960px; height: 200px;">
-                <canvas id="dynamic-chart" width="800" height="200"></canvas>
+            <canvas id="stock-candle-chart" width="800" height="350"></canvas>
+            <canvas id="stock-macd-chart" width="800" height="160"></canvas>
+            <canvas id="stock-kdj-chart" width="800" height="160"></canvas>
+            <div id="stock-dynamic-chart-container" style="width: 960px; height: 200px;">
+                <canvas id="stock-dynamic-chart" width="800" height="200"></canvas>
             </div>
         </div>
         <div id="recommendation"></div>
-        <div id="hourglass" style="display: none; font-size: 200px;">⏳</div>
+        <div id="stock-hourglass" style="display: none; font-size: 200px;">⏳</div>
     </div>
-
-    <div id="option-trading" class="tab-content" style="display:none;">
+    <div id="option-trading" class="tab-content">
         <!-- Option Trading Content -->
-        <h1>Trading Advisor</h1>
+        <br>
         <div>
-            <label for="symbol">Stock Symbol:</label>
-            <input type="text" id="symbol" value="NVDA" placeholder="Enter stock symbol">
+            <label for="option-symbol">Stock Symbol:</label>
+            <input type="text" id="option-symbol" value="NVDA" placeholder="Enter stock symbol">
         </div>
         <div>
-            <label for="start-date">Start Date:</label>
-            <input type="date" id="start-date">
-            <label for="end-date">End Date:</label>
-            <input type="date" id="end-date">
+            <label for="option-start-date">Start Date:</label>
+            <input type="date" id="option-start-date">
+            <label for="option-end-date">End Date:</label>
+            <input type="date" id="option-end-date">
         </div>
-        <button class="large-button" onclick="fetchData()">获取/展示数据</button>
+        <button class="large-button" onclick="fetchData('option')">获取/展示数据</button>
         <button class="large-button" onclick="getAdvice()">期权交易建议</button>
         <button class="large-button" onclick="simulate()">期权交易模拟</button>
-        <div id="stock-data">
-            <canvas id="candle-chart" width="800" height="350"></canvas>
-            <canvas id="macd-chart" width="800" height="160"></canvas>
-            <canvas id="kdj-chart" width="800" height="160"></canvas>
-            <div id="dynamic-chart-container" style="width: 960px; height: 200px;">
-                <canvas id="dynamic-chart" width="800" height="200"></canvas>
+        <div id="option-data">
+            <canvas id="option-candle-chart" width="800" height="350"></canvas>
+            <canvas id="option-macd-chart" width="800" height="160"></canvas>
+            <canvas id="option-kdj-chart" width="800" height="160"></canvas>
+            <div id="option-dynamic-chart-container" style="width: 960px; height: 200px;">
+                <canvas id="option-dynamic-chart" width="800" height="200"></canvas>
             </div>
         </div>
         <div id="advice"></div>
         <div id="simulation"></div>
-        <div id="hourglass" style="display: none; font-size: 200px;">⏳</div>
+        <div id="option-hourglass" style="display: none; font-size: 200px;">⏳</div>
     </div>
 
     <script src="static/js/fetchData.js"></script>
