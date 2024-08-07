@@ -1,22 +1,16 @@
 // static/js/transformer.js
 
 async function trainModel(data) {
-//    console.log("Training model with data:", data);
-
     const inputs = data.map(d => [
         d.open, d.high, d.low, d.close, d.volume,
         d.macd, d.macdSignal, d.k, d.d, d.rsi,
         d.ma20, d.atr, d.adx, d.slowK, d.slowD
     ]);
-//    console.log("Inputs for training:", inputs);
 
     const labels = data.map(d => d.close);  // 根据实际需要调整标签
-//    console.log("Labels for training:", labels);
 
     const inputTensor = tf.tensor2d(inputs);
     const labelTensor = tf.tensor2d(labels, [labels.length, 1]);
-
-//    console.log("Tensor shapes - Inputs:", inputTensor.shape, "Labels:", labelTensor.shape);
 
     const model = tf.sequential();
     model.add(tf.layers.dense({ inputShape: [15], units: 64, activation: 'relu' }));
@@ -34,33 +28,27 @@ async function trainModel(data) {
                 { height: 200, callbacks: ['onEpochEnd'] }
             )
         });
-//        console.log("Model training completed");
     } catch (error) {
         console.error("Error during model training:", error);
     }
 
     try {
         await model.save('localstorage://stock-prediction-model');
-//        console.log("Model saved to localstorage");
     } catch (error) {
         console.error("Error saving model:", error);
     }
 }
 
 async function predictRecommendation(model, data) {
-//    console.log("Predicting with model and data:", data);
-
     const inputs = data.map(d => [
         d.open, d.high, d.low, d.close, d.volume,
         d.macd, d.macdSignal, d.k, d.d, d.rsi,
         d.ma20, d.atr, d.adx, d.slowK, d.slowD
     ]);
     const inputTensor = tf.tensor2d(inputs);
-//    console.log("Input tensor for prediction:", inputTensor);
 
     try {
         const predictions = model.predict(inputTensor);
-//        console.log("Predictions:", predictions);
 
         const recommendation = predictions.arraySync().map((pred, index) => {
             const actualClose = data[index].close;
@@ -73,23 +61,20 @@ async function predictRecommendation(model, data) {
             }
         });
 
-//        console.log("Recommendations:", recommendation);
         return recommendation;
     } catch (error) {
         console.error("Error during prediction:", error);
     }
 }
 
-async function fetchDataAndTrainModel() {
-//    console.log("Fetching data and training model...");
+async function fetchDataAndTrainModel(type) {
     try {
-        if (!setGlobalVariables()) {
+        if (!setGlobalVariables(type)) {
             console.error("Global variables not set");
             return;
         }
         
-        const data = await fetchAllData();  // 使用参数传递
-//        console.log("Fetched data for training:", data);
+        const data = await fetchAllData(type);
         if (data) {
             await trainModel(data);
         } else {
@@ -100,33 +85,26 @@ async function fetchDataAndTrainModel() {
     }
 }
 
-async function getTransformerRecommendation() {
-//    console.log("Getting transformer recommendation...");
+async function getTransformerRecommendation(type) {
     try {
-        if (!setGlobalVariables()) {
- //           console.error("Global variables not set");
+        if (!setGlobalVariables(type)) {
             return;
         }
 
-        const data = await fetchAllData();  // 使用参数传递
-//        console.log("Fetched data for prediction:", data);
+        const data = await fetchAllData(type);
 
-        // 检查模型是否存在于本地存储中
         let model;
         try {
             model = await tf.loadLayersModel('localstorage://stock-prediction-model');
- //           console.log("Model loaded from localstorage");
         } catch (error) {
             console.error("Error loading model, training a new one.", error);
-            await fetchDataAndTrainModel();
+            await fetchDataAndTrainModel(type);
             model = await tf.loadLayersModel('localstorage://stock-prediction-model');
- //           console.log("New model trained and loaded");
         }
 
         if (data) {
             const recommendations = await predictRecommendation(model, data);
-//            console.log("Final recommendation:", recommendations[recommendations.length - 1]);
-            return recommendations[recommendations.length - 1]; // 返回最新日期的推荐
+            return recommendations[recommendations.length - 1];
         } else {
             console.error("No data available for prediction");
             return null;

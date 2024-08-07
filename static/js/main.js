@@ -16,15 +16,15 @@ let chartIndex = 0;
 const charts = ['volume', 'rsi', 'ma', 'atr', 'adx', 'stochastic'];
 let allData;
 
-function setGlobalVariables() {
-    symbol = document.getElementById('symbol').value;
+function setGlobalVariables(type) {
+    symbol = document.getElementById(type + '-symbol').value;
     if (!symbol) {
         alert('Please enter a stock symbol.');
         return false;
     }
 
-    startDate = document.getElementById('start-date').value || getLastMonthDate();
-    endDate = document.getElementById('end-date').value || getTodayDate();
+    startDate = document.getElementById(type + '-start-date').value || getLastMonthDate();
+    endDate = document.getElementById(type + '-end-date').value || getTodayDate();
     return true;
 }
 
@@ -35,18 +35,19 @@ function getTodayDate() {
 
 function getLastMonthDate() {
     const today = new Date();
-    const lastMonth = new Date(today.setMonth(today.getMonth() - 2));
+    const lastMonth = new Date(today.setMonth(today.getMonth() - 1));
     return lastMonth.toISOString().split('T')[0];
 }
 
-function setDefault() {
-    document.getElementById('symbol').value = 'NVDA';
-    document.getElementById('start-date').value = getLastMonthDate();
-    document.getElementById('end-date').value = getTodayDate();
+function setDefault(type) {
+    document.getElementById(type + '-symbol').value = 'NVDA';
+    document.getElementById(type + '-start-date').value = getLastMonthDate();
+    document.getElementById(type + '-end-date').value = getTodayDate();
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    setDefault();
+    setDefault('stock');
+    setDefault('option');
 });
 
 function showTab(tabName) {
@@ -73,8 +74,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     showTab('stock-trading');
 });
 
-async function fetchAllData() {
-    if (!setGlobalVariables()) {
+async function fetchAllData(type) {
+    if (!setGlobalVariables(type)) {
         return;
     }
     try {
@@ -101,7 +102,6 @@ async function fetchAllData() {
             slowD: stochasticData[index] ? stochasticData[index].slowD : null
         }));
 
- //       console.log("Combined data fetched:", combinedData); // 调试信息
         return combinedData;
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -109,39 +109,39 @@ async function fetchAllData() {
     }
 }
 
-async function fetchData() {
-    if (!setGlobalVariables()) {
+async function fetchData(type) {
+    if (!setGlobalVariables(type)) {
         return;
     }
-    // 显示沙漏图标
-    document.getElementById('hourglass').style.display = 'block';
+    // 显示对应tab的沙漏图标
+    document.getElementById(type + '-hourglass').style.display = 'block';
 
     try {
-        const data = await fetchAllData();
+        const data = await fetchAllData(type);
         allData = data;
 
-        renderTrendChart(stockData);
-        renderMACDChart(macdData);
-        renderKDJChart(kdjData);
-        renderVolumeChart(stockData); // 初始显示 volume 图表
-        document.getElementById('dynamic-chart-container').addEventListener('touchstart', renderNextChart);
+        renderTrendChart(stockData, type);
+        renderMACDChart(macdData, type);
+        renderKDJChart(kdjData, type);
+        renderVolumeChart(stockData, type); // 初始显示 volume 图表
+        document.getElementById(type + '-dynamic-chart-container').addEventListener('touchstart', () => renderNextChart(type));
     } catch (error) {
         console.error("Error fetching data:", error);
     } finally {
-        // 隐藏沙漏图标
-        document.getElementById('hourglass').style.display = 'none';
+        // 隐藏对应tab的沙漏图标
+        document.getElementById(type + '-hourglass').style.display = 'none';
     }
 }
 
-function renderNextChart() {
+function renderNextChart(type) {
     chartIndex = (chartIndex + 1) % charts.length;
     const currentChart = charts[chartIndex];
 
-    const dynamicChartContainer = document.getElementById('dynamic-chart-container');
+    const dynamicChartContainer = document.getElementById(type + '-dynamic-chart-container');
     dynamicChartContainer.innerHTML = ''; // 清空旧图表
 
     const newCanvas = document.createElement('canvas');
-    newCanvas.id = 'dynamic-chart';
+    newCanvas.id = type + '-dynamic-chart';
     dynamicChartContainer.appendChild(newCanvas);
 
     // 设置canvas的宽高
@@ -154,35 +154,35 @@ function renderNextChart() {
 
     switch (currentChart) {
         case 'volume':
-            renderVolumeChart(stockData);
+            renderVolumeChart(stockData, type);
             break;
         case 'rsi':
-            renderRSIChart(rsiData);
+            renderRSIChart(rsiData, type);
             break;
         case 'ma':
-            renderMAChart(maData);
+            renderMAChart(maData, type);
             break;
         case 'atr':
-            renderATRChart(atrData);
+            renderATRChart(atrData, type);
             break;
         case 'adx':
-            renderADXChart(adxData);
+            renderADXChart(adxData, type);
             break;
         case 'stochastic':
-            renderStochasticChart(stochasticData);
+            renderStochasticChart(stochasticData, type);
             break;
     }
 }
 
 async function getAdvice() {
-    if (!setGlobalVariables()) {
+    if (!setGlobalVariables('option')) {
         return;
     }
     // 显示沙漏图标
-    document.getElementById('hourglass').style.display = 'block';
+    document.getElementById('option-hourglass').style.display = 'block';
 
     try {
-        const data = await fetchAllData();
+        const data = await fetchAllData('option');
         const advice = await generateAdvice(symbol, macdData, kdjData, stockData);
         displayAdvice(advice); // 调用展示函数
     } catch (error) {
@@ -191,21 +191,21 @@ async function getAdvice() {
         document.getElementById('details').innerHTML = '';
     } finally {
         // 隐藏沙漏图标
-        document.getElementById('hourglass').style.display = 'none';
+        document.getElementById('option-hourglass').style.display = 'none';
     }
 }
 
 async function simulate() {
-    if (!setGlobalVariables()) {
+    if (!setGlobalVariables('option')) {
         return;
     }
     // 显示沙漏图标
-    document.getElementById('hourglass').style.display = 'block';
+    document.getElementById('option-hourglass').style.display = 'block';
 
     const initialInvestment = 10000;
 
     try {
-        const data = await fetchAllData();
+        const data = await fetchAllData('option');
         const { tradeDetails, finalValue } = await simulateTrade(symbol, startDate, endDate, initialInvestment);
         displaySimulationResults({ tradeDetails, finalValue, initialInvestment }); // 调用展示函数
     } catch (error) {
@@ -213,19 +213,18 @@ async function simulate() {
         document.getElementById('simulation').innerText = 'Error during simulation. Please check the console for more details.';
     } finally {
         // 隐藏沙漏图标
-        document.getElementById('hourglass').style.display = 'none';
+        document.getElementById('option-hourglass').style.display = 'none';
     }
 }
 
 async function getRecommendation() {
-    if (!setGlobalVariables()) {
+    if (!setGlobalVariables('stock')) {
         return;
     }
-    // 显示沙漏图标
-    document.getElementById('hourglass').style.display = 'block';
+    document.getElementById('stock-hourglass').style.display = 'block';
 
     try {
-        const data = await fetchAllData();
+        const data = await fetchAllData('stock');
 
         const recommendations = {
             bollinger: getBollingerBandsRecommendation(stockData),
@@ -239,18 +238,18 @@ async function getRecommendation() {
         };
 
         const { overallRecommendation, totalScore } = getOverallRecommendation(recommendations);
-        const transformerRecommendation = await getTransformerRecommendation(symbol, startDate, endDate);
-        displayRecommendations(recommendations, overallRecommendation, totalScore, transformerRecommendation); // 调用展示函数
+        const transformerRecommendation = await getTransformerRecommendation('stock');
+        displayRecommendations(recommendations, overallRecommendation, totalScore, transformerRecommendation);
     } catch (error) {
         console.error("Error fetching data:", error);
         document.getElementById('recommendation').innerText = 'Error generating recommendations. Please check the console for more details.';
     } finally {
-        // 隐藏沙漏图标
-        document.getElementById('hourglass').style.display = 'none';
+        document.getElementById('stock-hourglass').style.display = 'none';
     }
 }
 
 window.fetchData = fetchData;
+window.setGlobalVariables = setGlobalVariables;
 window.fetchAllData = fetchAllData;
 window.getAdvice = getAdvice;
 window.simulate = simulate;

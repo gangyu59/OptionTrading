@@ -1,12 +1,10 @@
 const API_KEY = 'OSQ403SM4KEOHQSQ';
 
 async function fetchStockData(symbol, startDate, endDate) {
-//    console.log("Fetching stock data...");
     const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&apikey=${API_KEY}&outputsize=full`;
     try {
         const response = await fetch(url);
         const data = await response.json();
-//        console.log("Stock data response received:", data);
 
         if (data.Information) {
             throw new Error(data.Information);
@@ -25,17 +23,26 @@ async function fetchStockData(symbol, startDate, endDate) {
                 volume: parseInt(timeSeries[date]['6. volume'])
             }));
 
-        const bollingerBands = await fetchBollingerBands(symbol, startDate, endDate);
-        stockData.forEach((data, index) => {
-            const band = bollingerBands.find(b => b.date === data.date);
-            if (band) {
-                data.upperBand = band.upperBand;
-                data.lowerBand = band.lowerBand;
-                data.middleBand = band.middleBand;
-            }
+        const indicators = await Promise.all([
+            fetchBollingerBands(symbol, startDate, endDate),
+            fetchMACD(symbol, startDate, endDate),
+            fetchKDJ(symbol, startDate, endDate),
+            fetchRSI(symbol, startDate, endDate),
+            fetchMA(symbol, startDate, endDate),
+            fetchATR(symbol, startDate, endDate),
+            fetchADX(symbol, startDate, endDate),
+            fetchStochastic(symbol, startDate, endDate)
+        ]);
+
+        indicators.forEach(indicator => {
+            stockData.forEach((data, index) => {
+                const ind = indicator.find(i => i.date === data.date);
+                if (ind) {
+                    Object.assign(data, ind);
+                }
+            });
         });
 
-//        console.log("Parsed stock data with Bollinger Bands:", stockData.slice(0, 5)); // Print the first 5 data points for verification
         return stockData;
     } catch (error) {
         console.error("Error fetching stock data:", error);
@@ -159,6 +166,132 @@ async function fetchOptionData(symbol, expirationDate, strikePrice, optionType) 
         return parsedOptionData;
     } catch (error) {
         console.error("Error fetching option price data:", error);
+        throw error;
+    }
+}
+
+async function fetchRSI(symbol, startDate, endDate) {
+    const url = `https://www.alphavantage.co/query?function=RSI&symbol=${symbol}&interval=daily&time_period=14&series_type=close&apikey=${API_KEY}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.Information) {
+            throw new Error(data.Information);
+        }
+
+        const rsiData = Object.keys(data['Technical Analysis: RSI'])
+            .filter(date => date >= startDate && date <= endDate)
+            .reverse() // Reverse the order to have the oldest date first
+            .map(date => ({
+                date,
+                rsi: parseFloat(data['Technical Analysis: RSI'][date]['RSI'])
+            }));
+
+        return rsiData;
+    } catch (error) {
+        console.error("Error fetching RSI data:", error);
+        throw error;
+    }
+}
+
+async function fetchMA(symbol, startDate, endDate) {
+    const url = `https://www.alphavantage.co/query?function=SMA&symbol=${symbol}&interval=daily&time_period=20&series_type=close&apikey=${API_KEY}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.Information) {
+            throw new Error(data.Information);
+        }
+
+        const maData = Object.keys(data['Technical Analysis: SMA'])
+            .filter(date => date >= startDate && date <= endDate)
+            .reverse() // Reverse the order to have the oldest date first
+            .map(date => ({
+                date,
+                ma: parseFloat(data['Technical Analysis: SMA'][date]['SMA'])
+            }));
+
+        return maData;
+    } catch (error) {
+        console.error("Error fetching MA data:", error);
+        throw error;
+    }
+}
+
+async function fetchATR(symbol, startDate, endDate) {
+    const url = `https://www.alphavantage.co/query?function=ATR&symbol=${symbol}&interval=daily&time_period=14&apikey=${API_KEY}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.Information) {
+            throw new Error(data.Information);
+        }
+
+        const atrData = Object.keys(data['Technical Analysis: ATR'])
+            .filter(date => date >= startDate && date <= endDate)
+            .reverse() // Reverse the order to have the oldest date first
+            .map(date => ({
+                date,
+                atr: parseFloat(data['Technical Analysis: ATR'][date]['ATR'])
+            }));
+
+        return atrData;
+    } catch (error) {
+        console.error("Error fetching ATR data:", error);
+        throw error;
+    }
+}
+
+async function fetchADX(symbol, startDate, endDate) {
+    const url = `https://www.alphavantage.co/query?function=ADX&symbol=${symbol}&interval=daily&time_period=14&apikey=${API_KEY}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.Information) {
+            throw new Error(data.Information);
+        }
+
+        const adxData = Object.keys(data['Technical Analysis: ADX'])
+            .filter(date => date >= startDate && date <= endDate)
+            .reverse() // Reverse the order to have the oldest date first
+            .map(date => ({
+                date,
+                adx: parseFloat(data['Technical Analysis: ADX'][date]['ADX'])
+            }));
+
+        return adxData;
+    } catch (error) {
+        console.error("Error fetching ADX data:", error);
+        throw error;
+    }
+}
+
+async function fetchStochastic(symbol, startDate, endDate) {
+    const url = `https://www.alphavantage.co/query?function=STOCH&symbol=${symbol}&interval=daily&apikey=${API_KEY}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.Information) {
+            throw new Error(data.Information);
+        }
+
+        const stochasticData = Object.keys(data['Technical Analysis: STOCH'])
+            .filter(date => date >= startDate && date <= endDate)
+            .reverse() // Reverse the order to have the oldest date first
+            .map(date => ({
+                date,
+                slowK: parseFloat(data['Technical Analysis: STOCH'][date]['SlowK']),
+                slowD: parseFloat(data['Technical Analysis: STOCH'][date]['SlowD'])
+            }));
+
+        return stochasticData;
+    } catch (error) {
+        console.error("Error fetching Stochastic data:", error);
         throw error;
     }
 }

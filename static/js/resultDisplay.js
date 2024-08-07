@@ -9,7 +9,7 @@ function displayAdvice(advice) {
         <p>Expiration: ${advice.expiration}</p>
         <p>Option Price: ${advice.optionPrice}</p>
     `;
-    document.getElementById('details').innerHTML = details;
+    document.getElementById('advice').innerHTML = details;
 }
 
 function displaySimulationResults(simulationResults) {

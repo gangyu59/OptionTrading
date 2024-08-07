@@ -1,5 +1,5 @@
-function renderTrendChart(stockData) {
-    const ctx = document.getElementById('candle-chart').getContext('2d');
+function renderTrendChart(stockData, tabName) {
+    const ctx = document.getElementById(`${tabName}-candle-chart`).getContext('2d');
     const labels = stockData.map(data => data.date);
     const open = stockData.map(data => data.open);
     const high = stockData.map(data => data.high);
@@ -21,34 +21,34 @@ function renderTrendChart(stockData) {
         labels: labels,
         datasets: [
             {
-								type: 'line',
+                type: 'line',
                 label: 'Upper Band',
                 data: upperBand,
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1,
                 fill: false,
-								pointRadius: 0,
-								tension: 0.4  // 使线条平滑
+                pointRadius: 0,
+                tension: 0.4  // 使线条平滑
             },
             {
                 type: 'line',
-								label: 'Lower Band',
+                label: 'Lower Band',
                 data: lowerBand,
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1,
                 fill: false,
-								pointRadius: 0,
-								tension: 0.4  // 使线条平滑
+                pointRadius: 0,
+                tension: 0.4  // 使线条平滑
             },
             {
                 type: 'line',
-								label: 'Middle Band',
+                label: 'Middle Band',
                 data: middleBand,
                 borderColor: 'rgba(255, 206, 86, 1)',
                 borderWidth: 1,
                 fill: false,
-								pointRadius: 0,
-								tension: 0.4  // 使线条平滑
+                pointRadius: 0,
+                tension: 0.4  // 使线条平滑
             },
             {
                 label: 'Candlestick Data',
@@ -73,12 +73,12 @@ function renderTrendChart(stockData) {
         responsive: true,
         scales: {
             x: {
-            display: false, // 隐藏 x 轴
-            type: 'category',
-            title: {
-                display: false,
-            	}
-        		},
+                display: false, // 隐藏 x 轴
+                type: 'category',
+                title: {
+                    display: false,
+                }
+            },
             y: {
                 beginAtZero: false,
                 title: {
@@ -134,15 +134,13 @@ function renderTrendChart(stockData) {
                 }
             }]
         });
-//        console.log('Chart instance:', chartInstance);
-//        console.log('Chart rendered successfully');
     } catch (error) {
         console.error('Error rendering chart:', error);
     }
 }
 
-function renderMACDChart(macdData) {
-    const ctx = document.getElementById('macd-chart').getContext('2d');
+function renderMACDChart(macdData, tabName) {
+    const ctx = document.getElementById(`${tabName}-macd-chart`).getContext('2d');
     const labels = macdData.map(data => data.date);
     const macd = macdData.map(data => data.macd);
     const signal = macdData.map(data => data.signal);
@@ -200,8 +198,8 @@ function renderMACDChart(macdData) {
     });
 }
 
-function renderKDJChart(kdjData) {
-    const ctx = document.getElementById('kdj-chart').getContext('2d');
+function renderKDJChart(kdjData, tabName) {
+    const ctx = document.getElementById(`${tabName}-kdj-chart`).getContext('2d');
     const labels = kdjData.map(data => data.date);
     const k = kdjData.map(data => data.k);
     const d = kdjData.map(data => data.d);
@@ -258,8 +256,8 @@ function renderKDJChart(kdjData) {
     });
 }
 
-function renderRSIChart(rsiData) {
-    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+function renderRSIChart(rsiData, tabName) {
+    const ctx = document.getElementById(`${tabName}-dynamic-chart`).getContext('2d');
     const labels = rsiData.map(data => data.date);
     const rsi = rsiData.map(data => data.rsi);
 
@@ -284,12 +282,12 @@ function renderRSIChart(rsiData) {
             responsive: true,
             scales: {
                 x: {
-		                display: true,
-		                title: {
-		                    display: true,
-		                    text: 'Date'
-		                }
-		            },
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
                 y: {
                     display: true,
                     title: {
@@ -302,8 +300,8 @@ function renderRSIChart(rsiData) {
     });
 }
 
-function renderMAChart(maData) {
-    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+function renderMAChart(maData, tabName) {
+    const ctx = document.getElementById(`${tabName}-dynamic-chart`).getContext('2d');
     const labels = maData.map(data => data.date);
     const ma = maData.map(data => data.ma);
 
@@ -328,12 +326,12 @@ function renderMAChart(maData) {
             responsive: true,
             scales: {
                 x: {
-		                display: true,
-		                title: {
-		                    display: true,
-		                    text: 'Date'
-		                }
-		            },
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
                 y: {
                     display: true,
                     title: {
@@ -346,8 +344,8 @@ function renderMAChart(maData) {
     });
 }
 
-function renderATRChart(atrData) {
-    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+function renderATRChart(atrData, tabName) {
+    const ctx = document.getElementById(`${tabName}-dynamic-chart`).getContext('2d');
     const labels = atrData.map(data => data.date);
     const atr = atrData.map(data => data.atr);
 
@@ -372,12 +370,12 @@ function renderATRChart(atrData) {
             responsive: true,
             scales: {
                 x: {
-		                display: true,
-		                title: {
-		                    display: true,
-		                    text: 'Date'
-		                }
-		            },
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
                 y: {
                     display: true,
                     title: {
@@ -390,8 +388,8 @@ function renderATRChart(atrData) {
     });
 }
 
-function renderADXChart(adxData) {
-    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+function renderADXChart(adxData, tabName) {
+    const ctx = document.getElementById(`${tabName}-dynamic-chart`).getContext('2d');
     const labels = adxData.map(data => data.date);
     const adx = adxData.map(data => data.adx);
 
@@ -416,12 +414,12 @@ function renderADXChart(adxData) {
             responsive: true,
             scales: {
                 x: {
-		                display: true,
-		                title: {
-		                    display: true,
-		                    text: 'Date'
-		                }
-            		},
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
                 y: {
                     display: true,
                     title: {
@@ -434,8 +432,8 @@ function renderADXChart(adxData) {
     });
 }
 
-function renderStochasticChart(stochasticData) {
-    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+function renderStochasticChart(stochasticData, tabName) {
+    const ctx = document.getElementById(`${tabName}-dynamic-chart`).getContext('2d');
     const labels = stochasticData.map(data => data.date);
     const slowK = stochasticData.map(data => data.slowK);
     const slowD = stochasticData.map(data => data.slowD);
@@ -487,8 +485,8 @@ function renderStochasticChart(stochasticData) {
     });
 }
 
-function renderVolumeChart(stockData) {
-    const ctx = document.getElementById('dynamic-chart').getContext('2d');
+function renderVolumeChart(stockData, tabName) {
+    const ctx = document.getElementById(`${tabName}-dynamic-chart`).getContext('2d');
     const labels = stockData.map(data => data.date);
     const volume = stockData.map(data => data.volume / 1000000); // 以百万为单位
 
