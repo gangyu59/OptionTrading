@@ -49,6 +49,30 @@ document.addEventListener('DOMContentLoaded', (event) => {
     setDefault();
 });
 
+function showTab(tabName) {
+    // 隐藏所有的tab内容
+    document.getElementById('stock-trading').style.display = 'none';
+    document.getElementById('option-trading').style.display = 'none';
+
+    // 移除所有tab的活动状态
+    document.getElementById('stock-trading-tab').classList.remove('active');
+    document.getElementById('option-trading-tab').classList.remove('active');
+
+    // 显示选中的tab内容并添加活动状态
+    if (tabName === 'stock-trading') {
+        document.getElementById('stock-trading').style.display = 'block';
+        document.getElementById('stock-trading-tab').classList.add('active');
+    } else if (tabName === 'option-trading') {
+        document.getElementById('option-trading').style.display = 'block';
+        document.getElementById('option-trading-tab').classList.add('active');
+    }
+}
+
+// 默认显示stock-trading tab
+document.addEventListener('DOMContentLoaded', (event) => {
+    showTab('stock-trading');
+});
+
 async function fetchAllData() {
     if (!setGlobalVariables()) {
         return;
@@ -77,7 +101,7 @@ async function fetchAllData() {
             slowD: stochasticData[index] ? stochasticData[index].slowD : null
         }));
 
-//        console.log("Combined data fetched:", combinedData); // 调试信息
+ //       console.log("Combined data fetched:", combinedData); // 调试信息
         return combinedData;
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -89,8 +113,8 @@ async function fetchData() {
     if (!setGlobalVariables()) {
         return;
     }
-		// 显示沙漏图标
-	document.getElementById('hourglass').style.display = 'block';
+    // 显示沙漏图标
+    document.getElementById('hourglass').style.display = 'block';
 
     try {
         const data = await fetchAllData();
@@ -100,10 +124,10 @@ async function fetchData() {
         renderMACDChart(macdData);
         renderKDJChart(kdjData);
         renderVolumeChart(stockData); // 初始显示 volume 图表
-				document.getElementById('dynamic-chart-container').addEventListener('touchstart', renderNextChart);
+        document.getElementById('dynamic-chart-container').addEventListener('touchstart', renderNextChart);
     } catch (error) {
         console.error("Error fetching data:", error);
-    }finally {
+    } finally {
         // 隐藏沙漏图标
         document.getElementById('hourglass').style.display = 'none';
     }
@@ -128,7 +152,6 @@ function renderNextChart() {
 
     const ctx = newCanvas.getContext('2d');
 
-
     switch (currentChart) {
         case 'volume':
             renderVolumeChart(stockData);
@@ -145,7 +168,8 @@ function renderNextChart() {
         case 'adx':
             renderADXChart(adxData);
             break;
-        case 'stochastic':           renderStochasticChart(stochasticData);
+        case 'stochastic':
+            renderStochasticChart(stochasticData);
             break;
     }
 }
@@ -154,29 +178,18 @@ async function getAdvice() {
     if (!setGlobalVariables()) {
         return;
     }
-		// 显示沙漏图标
-	document.getElementById('hourglass').style.display = 'block';
-	
+    // 显示沙漏图标
+    document.getElementById('hourglass').style.display = 'block';
+
     try {
         const data = await fetchAllData();
-
         const advice = await generateAdvice(symbol, macdData, kdjData, stockData);
-
-        const details = `
-            <h3>AI Results:</h3>
-            <p>Recommendation: ${advice.recommendation}</p>
-            <p>Strike Price: ${advice.strikePrice}</p>
-            <p>Max Premium: ${advice.maxPremium}</p>
-            <p>Expiration: ${advice.expiration}</p>
-            <p>Option Price: ${advice.optionPrice}</p>
-        `;
-        document.getElementById('details').innerHTML = details;
-
+        displayAdvice(advice); // 调用展示函数
     } catch (error) {
         console.error("Error getting advice:", error);
         document.getElementById('advice').innerText = 'Error generating advice. Please check the console for more details.';
         document.getElementById('details').innerHTML = '';
-    }finally {
+    } finally {
         // 隐藏沙漏图标
         document.getElementById('hourglass').style.display = 'none';
     }
@@ -186,59 +199,19 @@ async function simulate() {
     if (!setGlobalVariables()) {
         return;
     }
-		// 显示沙漏图标
-	document.getElementById('hourglass').style.display = 'block';
-	
+    // 显示沙漏图标
+    document.getElementById('hourglass').style.display = 'block';
+
     const initialInvestment = 10000;
 
     try {
         const data = await fetchAllData();
-
         const { tradeDetails, finalValue } = await simulateTrade(symbol, startDate, endDate, initialInvestment);
-
-        let simulationDetails = `
-            <h3>Simulation Results:</h3>
-            <p>Initial Investment: $${initialInvestment.toFixed(2)}</p>
-            <p>Final Value: $${finalValue.toFixed(2)}</p>
-            <p>Total Return: $${(finalValue - initialInvestment).toFixed(2)}</p>
-            <h3>Trade Details:</h3>
-            <table border="1">
-                <tr>
-                    <th>Date</th>
-                    <th>Action</th>
-                    <th>Price</th>
-                    <th>Trade Units</th>
-                    <th>Holdings</th>
-                    <th>Value in Hand</th>
-                    <th>Decision Base</th>
-                </tr>
-        `;
-
-        tradeDetails
-            .filter(trade => trade.action !== "Hold")
-            .forEach(trade => {
-                const price = trade.price !== undefined ? `$${trade.price.toFixed(2)}` : 'N/A';
-                simulationDetails += `
-                    <tr>
-                        <td>${trade.date}</td>
-                        <td>${trade.action}</td>
-                        <td>${price}</td>
-                        <td>${trade.units || 'N/A'}</td>
-                        <td>${trade.holdings}</td>
-                        <td>$${trade.cash.toFixed(2)}</td>
-                        <td>${trade.decisionBase}</td>
-                    </tr>
-                `;
-            });
-
-        simulationDetails += `</table>`;
-
-        document.getElementById('simulation').innerHTML = simulationDetails;
-
+        displaySimulationResults({ tradeDetails, finalValue, initialInvestment }); // 调用展示函数
     } catch (error) {
         console.error("Error during simulation:", error.message);
         document.getElementById('simulation').innerText = 'Error during simulation. Please check the console for more details.';
-    }finally {
+    } finally {
         // 隐藏沙漏图标
         document.getElementById('hourglass').style.display = 'none';
     }
@@ -248,9 +221,9 @@ async function getRecommendation() {
     if (!setGlobalVariables()) {
         return;
     }
-		// 显示沙漏图标
-	document.getElementById('hourglass').style.display = 'block';
-	
+    // 显示沙漏图标
+    document.getElementById('hourglass').style.display = 'block';
+
     try {
         const data = await fetchAllData();
 
@@ -266,61 +239,12 @@ async function getRecommendation() {
         };
 
         const { overallRecommendation, totalScore } = getOverallRecommendation(recommendations);
-
-        // 调用Transformer模型获取推荐
         const transformerRecommendation = await getTransformerRecommendation(symbol, startDate, endDate);
-
-        let recommendationDetails = `
-    <h3 style="text-align:center;">Recommendations:</h3>
-    <table border="1" style="width: 100%; text-align: center;">
-        <tr>
-            <th>Indicator</th>
-            <th>Bollinger Bands</th>
-            <th>MACD</th>
-            <th>KDJ</th>
-            <th>RSI</th>
-            <th>MA</th>
-            <th>ATR</th>
-            <th>ADX</th>
-            <th>Stochastic</th>
-            <th>Overall</th>
-            <th>Total Score</th>
-            <th>Transformer Advice</th>
-        </tr>
-        <tr>
-            <td><b>Recommendation</b></td>
-            <td style="color:${getColor(recommendations.bollinger)};">${recommendations.bollinger}</td>
-            <td style="color:${getColor(recommendations.macd)};">${recommendations.macd}</td>
-            <td style="color:${getColor(recommendations.kdj)};">${recommendations.kdj}</td>
-            <td style="color:${getColor(recommendations.rsi)};">${recommendations.rsi}</td>
-            <td style="color:${getColor(recommendations.ma)};">${recommendations.ma}</td>
-            <td style="color:${getColor(recommendations.atr)};">${recommendations.atr}</td>
-            <td style="color:${getColor(recommendations.adx)};">${recommendations.adx}</td>
-            <td style="color:${getColor(recommendations.stochastic)};">${recommendations.stochastic}</td>
-            <td style="color:${getColor(overallRecommendation)};">${overallRecommendation}</td>
-            <td>${totalScore}</td>
-            <td style="color:${getColor(transformerRecommendation)};">${transformerRecommendation}</td>
-        </tr>
-    </table>
-`;
-
-function getColor(recommendation) {
-    switch (recommendation) {
-        case 'Buy':
-            return 'green';
-        case 'Sell':
-            return 'red';
-        case 'Hold':
-            return 'black';
-        default:
-            return 'black';
-    }
-}
-        document.getElementById('recommendation').innerHTML = recommendationDetails;
+        displayRecommendations(recommendations, overallRecommendation, totalScore, transformerRecommendation); // 调用展示函数
     } catch (error) {
         console.error("Error fetching data:", error);
         document.getElementById('recommendation').innerText = 'Error generating recommendations. Please check the console for more details.';
-    }finally {
+    } finally {
         // 隐藏沙漏图标
         document.getElementById('hourglass').style.display = 'none';
     }
@@ -331,3 +255,4 @@ window.fetchAllData = fetchAllData;
 window.getAdvice = getAdvice;
 window.simulate = simulate;
 window.getRecommendation = getRecommendation;
+window.showTab = showTab;
