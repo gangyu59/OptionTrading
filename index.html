@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Option Trading</title>
+    <title>Option Trading Advisor</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="manifest" href="manifest.json">
     <script src="static/js/chart.js"></script>
@@ -11,7 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script> <!-- 添加TensorFlow.js可视化库 -->
 </head>
 <body>
-    <h1>Option Trading Advisor</h1>
     <div>
         <label for="symbol">Stock Symbol:</label>
         <input type="text" id="symbol" value="NVDA" placeholder="Enter stock symbol">
@@ -26,18 +25,19 @@
     <button class="large-button" onclick="getAdvice()">期权交易建议</button>
 		<button class="large-button" onclick="simulate()">期权交易模拟</button>
 		<button class="large-button" onclick="getRecommendation()">股票交易推荐</button>
+		<div id="hourglass" style="display: none; font-size: 120px;">⏳</div>
 		<div id="stock-data">
 		    <canvas id="candle-chart" width="800" height="350"></canvas>
-		    <canvas id="macd-chart" width="800" height="180"></canvas>
-		    <canvas id="kdj-chart" width="800" height="180"></canvas>
-				<div id="dynamic-chart-container" style="width: 800px; height: 180px;">
-        		<canvas id="dynamic-chart" width="800" height="180"></canvas>
+		    <canvas id="macd-chart" width="800" height="160"></canvas>
+		    <canvas id="kdj-chart" width="800" height="160"></canvas>
+				<div id="dynamic-chart-container" style="width: 960px; height: 200px;">
+        		<canvas id="dynamic-chart" width="800" height="200"></canvas>
     		</div>
 		</div>
+    <div id="recommendation"></div>
     <div id="advice"></div>
 		<div id="details"></div>
 		<div id="simulation"></div>
-		<div id="recommendation"></div>
     </div>
 
     <script src="static/js/fetchData.js"></script>
