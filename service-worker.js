@@ -7,14 +7,16 @@ const urlsToCache = [
     'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js',
     'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs',
     'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis',
+		'/static/js/misc.js',
     '/static/js/chart.js',
     '/static/js/fetchData.js',
     '/static/js/stockChart.js',
 		'/static/js/resultDisplay.js',
-    '/static/js/generateAdvice.js',
-    '/static/js/simulateTrade.js',
+    '/static/js/generateOptionAdvice.js',
+    '/static/js/simulateStockTrade.js',
+		'/static/js/simulateOptionTrade.js',
     '/static/js/transformer.js',
-    '/static/js/recommendation.js',
+    '/static/js/generateStockRecommendation.js',
     '/static/js/main.js'
 ];
 
