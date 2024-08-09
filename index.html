@@ -7,8 +7,8 @@
     <link rel="manifest" href="manifest.json">
     <script src="static/js/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> <!-- 添加TensorFlow.js库 -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script> <!-- 添加TensorFlow.js可视化库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script> 
 </head>
 <body>
     <div class="tab">
@@ -29,7 +29,8 @@
             <input type="date" id="stock-end-date">
         </div>
         <button class="large-button" onclick="fetchData('stock')">获取/展示数据</button>
-        <button class="large-button" onclick="getRecommendation()">股票交易推荐</button>
+        <button class="large-button" onclick="getStockRecommendation()">股票交易建议</button>
+				<button class="large-button" onclick="simulateStock()">股票交易模拟</button>
         <div id="stock-data">
             <canvas id="stock-candle-chart" width="800" height="350"></canvas>
             <canvas id="stock-macd-chart" width="800" height="160"></canvas>
@@ -38,7 +39,8 @@
                 <canvas id="stock-dynamic-chart" width="800" height="200"></canvas>
             </div>
         </div>
-        <div id="recommendation"></div>
+        <div id="stockRecommendation"></div>
+				<div id="stockSimulation"></div>
         <div id="stock-hourglass" style="display: none; font-size: 200px;">⏳</div>
     </div>
     <div id="option-trading" class="tab-content">
@@ -55,8 +57,8 @@
             <input type="date" id="option-end-date">
         </div>
         <button class="large-button" onclick="fetchData('option')">获取/展示数据</button>
-        <button class="large-button" onclick="getAdvice()">期权交易建议</button>
-        <button class="large-button" onclick="simulate()">期权交易模拟</button>
+        <button class="large-button" onclick="getOptionAdvice()">期权交易建议</button>
+        <button class="large-button" onclick="simulateOption()">期权交易模拟</button>
         <div id="option-data">
             <canvas id="option-candle-chart" width="800" height="350"></canvas>
             <canvas id="option-macd-chart" width="800" height="160"></canvas>
@@ -65,18 +67,19 @@
                 <canvas id="option-dynamic-chart" width="800" height="200"></canvas>
             </div>
         </div>
-        <div id="advice"></div>
-        <div id="simulation"></div>
+        <div id="optionAdvice"></div>
+        <div id="optionSimulation"></div>
         <div id="option-hourglass" style="display: none; font-size: 200px;">⏳</div>
     </div>
 
     <script src="static/js/fetchData.js"></script>
     <script src="static/js/stockChart.js"></script>
     <script src="static/js/resultDisplay.js"></script>
-    <script src="static/js/generateAdvice.js"></script>
-    <script src="static/js/simulateTrade.js"></script>
-    <script src="static/js/transformer.js"></script>
-    <script src="static/js/recommendation.js"></script>
+		<script src="static/js/transformer.js"></script>
+    <script src="static/js/generateOptionAdvice.js"></script>
+    <script src="static/js/simulateOptionTrade.js"></script>
+		<script src="static/js/generateStockRecommendation.js"></script>
+		<script src="static/js/simulateStockTrade.js"></script>
     <script src="static/js/main.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
