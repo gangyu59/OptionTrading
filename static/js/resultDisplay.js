@@ -1,6 +1,7 @@
 // static/js/resultDisplay.js
 
-function displayAdvice(advice) {
+
+function displayOptionAdvice(advice) {
     const details = `
         <h3>AI Results:</h3>
         <p>Recommendation: ${advice.recommendation}</p>
@@ -9,10 +10,10 @@ function displayAdvice(advice) {
         <p>Expiration: ${advice.expiration}</p>
         <p>Option Price: ${advice.optionPrice}</p>
     `;
-    document.getElementById('advice').innerHTML = details;
+    document.getElementById('optionAdvice').innerHTML = details;
 }
 
-function displaySimulationResults(simulationResults) {
+function displayOptionSimulationResults(simulationResults) {
     let simulationDetails = `
         <h3>Simulation Results:</h3>
         <p>Initial Investment: $${simulationResults.initialInvestment.toFixed(2)}</p>
@@ -50,10 +51,76 @@ function displaySimulationResults(simulationResults) {
 
     simulationDetails += `</table>`;
 
-    document.getElementById('simulation').innerHTML = simulationDetails;
+    document.getElementById('optionSimulation').innerHTML = simulationDetails;
 }
 
-function displayRecommendations(recommendations, overallRecommendation, totalScore, transformerRecommendation) {
+function displayStockSimulationResults(simulationResults) {
+    const totalReturn = simulationResults.finalValue - simulationResults.initialInvestment;
+    const returnRate = (totalReturn / simulationResults.initialInvestment) * 100;
+
+    let simulationDetails = `
+        <h3>Simulation Results:</h3>
+        <table border="1" style="margin:auto; text-align:center;">
+            <tr>
+                <th>Initial Investment</th>
+                <th>Final Value</th>
+                <th>Total Return</th>
+                <th>Return Rate</th>
+            </tr>
+            <tr>
+                <td>$${simulationResults.initialInvestment.toFixed(2)}</td>
+                <td>$${simulationResults.finalValue.toFixed(2)}</td>
+                <td>${totalReturn < 0 ? `-$${Math.abs(totalReturn).toFixed(2)}` : `$${totalReturn.toFixed(2)}`}</td>
+                <td>${returnRate.toFixed(2)}%</td>
+            </tr>
+        </table>
+        <h3>Trade Details:</h3>
+        <table border="1" style="margin:auto; text-align:center;">
+            <tr>
+                <th>Date</th>
+                <th>Action</th>
+                <th>Price</th>
+                <th>Trade Units</th>
+                <th>Holdings</th>
+                <th>Cash on Hand</th>
+                <th>Total Value</th>
+                <th>Technical Indicators Recommendation</th>
+                <th>Total Score</th>
+                <th>Transformer Recommendation</th>
+            </tr>
+    `;
+
+    simulationResults.tradeDetails
+        .filter(trade => trade.action !== "Hold")
+        .forEach(trade => {
+            if (trade.units !== 0) { // 忽略没有实际交易的记录
+                const price = trade.price !== undefined ? `$${parseFloat(trade.price).toFixed(2)}` : 'N/A';
+                const cashOnHand = trade.cash < 0 ? `-$${Math.abs(trade.cash).toFixed(2)}` : `$${trade.cash.toFixed(2)}`;
+                const totalValue = trade.totalValue < 0 ? `-$${Math.abs(trade.totalValue).toFixed(2)}` : `$${trade.totalValue.toFixed(2)}`;
+                
+                simulationDetails += `
+                    <tr>
+                        <td>${trade.date}</td>
+                        <td>${trade.action}</td>
+                        <td>${price}</td>
+                        <td>${trade.units || 'N/A'}</td>
+                        <td>${trade.holdings}</td>
+                        <td>${cashOnHand}</td>
+                        <td>${totalValue}</td>
+                        <td>${trade.decisionBase.technicalRecommendation}</td>
+                        <td>${trade.decisionBase.totalScore}</td>
+                        <td>${trade.decisionBase.transformerRecommendation}</td>
+                    </tr>
+                `;
+            }
+        });
+
+    simulationDetails += `</table>`;
+
+    document.getElementById('stockSimulation').innerHTML = simulationDetails;
+}
+
+function displayStockRecommendation(recommendations, overallRecommendation, totalScore, transformerRecommendation) {
     let recommendationDetails = `
     <h3 style="text-align:center;">Recommendations:</h3>
     <table border="1" style="width: 100%; text-align: center;">
@@ -87,8 +154,7 @@ function displayRecommendations(recommendations, overallRecommendation, totalSco
         </tr>
     </table>
 `;
-
-    document.getElementById('recommendation').innerHTML = recommendationDetails;
+    document.getElementById('stockRecommendation').innerHTML = recommendationDetails;
 }
 
 function getColor(recommendation) {
@@ -104,6 +170,7 @@ function getColor(recommendation) {
     }
 }
 
-window.displayAdvice = displayAdvice;
-window.displaySimulationResults = displaySimulationResults;
-window.displayRecommendations = displayRecommendations;
+window.displayOptionAdvice = displayOptionAdvice;
+window.displayOptionSimulationResults = displayOptionSimulationResults;
+window.displayStockSimulationResults = displayStockSimulationResults;
+window.displayStockRecommendation = displayStockRecommendation;

@@ -174,7 +174,7 @@ function renderNextChart(type) {
     }
 }
 
-async function getAdvice() {
+async function getOptionAdvice() {
     if (!setGlobalVariables('option')) {
         return;
     }
@@ -183,49 +183,8 @@ async function getAdvice() {
 
     try {
         const data = await fetchAllData('option');
-        const advice = await generateAdvice(symbol, macdData, kdjData, stockData);
-        displayAdvice(advice); // 调用展示函数
-    } catch (error) {
-        console.error("Error getting advice:", error);
-        document.getElementById('advice').innerText = 'Error generating advice. Please check the console for more details.';
-        document.getElementById('details').innerHTML = '';
-    } finally {
-        // 隐藏沙漏图标
-        document.getElementById('option-hourglass').style.display = 'none';
-    }
-}
 
-async function simulate() {
-    if (!setGlobalVariables('option')) {
-        return;
-    }
-    // 显示沙漏图标
-    document.getElementById('option-hourglass').style.display = 'block';
-
-    const initialInvestment = 10000;
-
-    try {
-        const data = await fetchAllData('option');
-        const { tradeDetails, finalValue } = await simulateTrade(symbol, startDate, endDate, initialInvestment);
-        displaySimulationResults({ tradeDetails, finalValue, initialInvestment }); // 调用展示函数
-    } catch (error) {
-        console.error("Error during simulation:", error.message);
-        document.getElementById('simulation').innerText = 'Error during simulation. Please check the console for more details.';
-    } finally {
-        // 隐藏沙漏图标
-        document.getElementById('option-hourglass').style.display = 'none';
-    }
-}
-
-async function getRecommendation() {
-    if (!setGlobalVariables('stock')) {
-        return;
-    }
-    document.getElementById('stock-hourglass').style.display = 'block';
-
-    try {
-        const data = await fetchAllData('stock');
-
+        // 获取各项指标的推荐结果
         const recommendations = {
             bollinger: getBollingerBandsRecommendation(stockData),
             macd: getMACDRecommendation(macdData),
@@ -237,12 +196,100 @@ async function getRecommendation() {
             stochastic: getStochasticRecommendation(stochasticData)
         };
 
+        const advice = await generateOptionAdvice(symbol, macdData, kdjData, stockData, recommendations);
+        displayOptionAdvice(advice); 
+    } catch (error) {
+        console.error("Error getting advice:", error);
+        document.getElementById('optionAdvice').innerText = 'Error generating advice. Please check the console for more details.';
+    } finally {
+        // 隐藏沙漏图标
+        document.getElementById('option-hourglass').style.display = 'none';
+    }
+}
+
+async function simulateOption() {
+    if (!setGlobalVariables('option')) {
+        return;
+    }
+    // 显示沙漏图标
+    document.getElementById('option-hourglass').style.display = 'block';
+
+    const initialInvestment = 10000;
+
+    try {
+        const data = await fetchAllData('option');
+        const { tradeDetails, finalValue } = await simulateOptionTrade(symbol, startDate, endDate, initialInvestment);
+        displayOptionSimulationResults({ tradeDetails, finalValue, initialInvestment }); // 调用展示函数
+    } catch (error) {
+        console.error("Error during simulation:", error.message);
+        document.getElementById('optionSimulation').innerText = 'Error during simulation. Please check the console for more details.';
+    } finally {
+        // 隐藏沙漏图标
+        document.getElementById('option-hourglass').style.display = 'none';
+    }
+}
+
+async function simulateStock() {
+    if (!setGlobalVariables('stock')) {
+        return;
+    }
+    // 显示沙漏图标
+    document.getElementById('stock-hourglass').style.display = 'block';
+
+    const initialInvestment = 10000;
+
+    try {
+        const data = await fetchAllData('stock');
+//        console.log("Fetched all data: ", data);
+        
+        const simulationResults = await simulateStockTrade(symbol, startDate, endDate, 1, 0, 1); // 设定 alpha, beta 和 gamma 的值
+//        console.log("Simulation results: ", simulationResults);
+
+        if (simulationResults) {
+            displayStockSimulationResults(simulationResults); // 调用展示函数
+        } else {
+            document.getElementById('stockSimulation').innerText = 'Simulation returned no results.';
+        }
+    } catch (error) {
+        console.error("Error during simulation:", error.message);
+        document.getElementById('stockSimulation').innerText = 'Error during simulation. Please check the console for more details.';
+    } finally {
+        // 隐藏沙漏图标
+        document.getElementById('stock-hourglass').style.display = 'none';
+    }
+}
+
+async function getStockRecommendation() {
+    if (!setGlobalVariables('stock')) {
+        return;
+    }
+    document.getElementById('stock-hourglass').style.display = 'block';
+
+    try {
+        const data = await fetchAllData('stock');
+
+        const recommendations = {
+            bollinger: getBollingerBandsRecommendation(stockData),
+            macd: getMACDRecommendation(macdData),
+            kdj: 
+							getKDJRecommendation(kdjData),
+            rsi: 
+							getRSIRecommendation(rsiData),
+            ma: 
+							getMARecommendation(maData),
+            atr: 
+							getATRRecommendation(atrData),
+            adx: 
+							getADXRecommendation(adxData),
+            stochastic: getStochasticRecommendation(stochasticData)
+        };
+
         const { overallRecommendation, totalScore } = getOverallRecommendation(recommendations);
         const transformerRecommendation = await getTransformerRecommendation('stock');
-        displayRecommendations(recommendations, overallRecommendation, totalScore, transformerRecommendation);
+        displayStockRecommendation(recommendations, overallRecommendation, totalScore, transformerRecommendation);
     } catch (error) {
         console.error("Error fetching data:", error);
-        document.getElementById('recommendation').innerText = 'Error generating recommendations. Please check the console for more details.';
+        document.getElementById('stockRecommendation').innerText = 'Error generating recommendations. Please check the console for more details.';
     } finally {
         document.getElementById('stock-hourglass').style.display = 'none';
     }
@@ -251,7 +298,8 @@ async function getRecommendation() {
 window.fetchData = fetchData;
 window.setGlobalVariables = setGlobalVariables;
 window.fetchAllData = fetchAllData;
-window.getAdvice = getAdvice;
-window.simulate = simulate;
-window.getRecommendation = getRecommendation;
+window.getOptionAdvice = getOptionAdvice;
+window.simulateOption = simulateOption;
+window.getStockRecommendation = getStockRecommendation;
+window.simulateStock = simulateStock;
 window.showTab = showTab;
