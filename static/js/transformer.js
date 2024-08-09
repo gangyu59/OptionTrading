@@ -85,23 +85,28 @@ async function fetchDataAndTrainModel(type) {
     }
 }
 
-async function getTransformerRecommendation(type) {
+async function getTransformerRecommendation(symbol, startDate, endDate, type) {
     try {
+        // 确保全局变量已正确设置
         if (!setGlobalVariables(type)) {
             return;
         }
 
-        const data = await fetchAllData(type);
+        // 获取模型所需的数据，注意要传入正确的参数
+        const data = await fetchAllData(symbol, startDate, endDate, type);
 
         let model;
         try {
+            // 尝试从 localstorage 加载模型
             model = await tf.loadLayersModel('localstorage://stock-prediction-model');
         } catch (error) {
             console.error("Error loading model, training a new one.", error);
-            await fetchDataAndTrainModel(type);
+            // 如果加载失败，重新训练模型并保存
+            await fetchDataAndTrainModel(symbol, startDate, endDate, type);
             model = await tf.loadLayersModel('localstorage://stock-prediction-model');
         }
 
+        // 如果有数据，进行预测
         if (data) {
             const recommendations = await predictRecommendation(model, data);
             return recommendations[recommendations.length - 1];

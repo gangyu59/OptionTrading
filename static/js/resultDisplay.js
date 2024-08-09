@@ -55,6 +55,12 @@ function displayOptionSimulationResults(simulationResults) {
 }
 
 function displayStockSimulationResults(simulationResults) {
+    console.log("开始展示交易细节：", simulationResults);  // 这是你已经有的打印语句
+
+    // 简单地测试插入内容是否显示
+  document.getElementById('stockSimulation').innerHTML = simulationResults;
+    
+    // 原来的显示逻辑
     const totalReturn = simulationResults.finalValue - simulationResults.initialInvestment;
     const returnRate = (totalReturn / simulationResults.initialInvestment) * 100;
 
@@ -90,30 +96,26 @@ function displayStockSimulationResults(simulationResults) {
             </tr>
     `;
 
-    simulationResults.tradeDetails
-        .filter(trade => trade.action !== "Hold")
-        .forEach(trade => {
-            if (trade.units !== 0) { // 忽略没有实际交易的记录
-                const price = trade.price !== undefined ? `$${parseFloat(trade.price).toFixed(2)}` : 'N/A';
-                const cashOnHand = trade.cash < 0 ? `-$${Math.abs(trade.cash).toFixed(2)}` : `$${trade.cash.toFixed(2)}`;
-                const totalValue = trade.totalValue < 0 ? `-$${Math.abs(trade.totalValue).toFixed(2)}` : `$${trade.totalValue.toFixed(2)}`;
-                
-                simulationDetails += `
-                    <tr>
-                        <td>${trade.date}</td>
-                        <td>${trade.action}</td>
-                        <td>${price}</td>
-                        <td>${trade.units || 'N/A'}</td>
-                        <td>${trade.holdings}</td>
-                        <td>${cashOnHand}</td>
-                        <td>${totalValue}</td>
-                        <td>${trade.decisionBase.technicalRecommendation}</td>
-                        <td>${trade.decisionBase.totalScore}</td>
-                        <td>${trade.decisionBase.transformerRecommendation}</td>
-                    </tr>
-                `;
-            }
-        });
+    simulationResults.tradeDetails.forEach(trade => {
+        const price = `$${parseFloat(trade.price).toFixed(2)}`;
+        const cashOnHand = trade.cash < 0 ? `-$${Math.abs(trade.cash).toFixed(2)}` : `$${trade.cash.toFixed(2)}`;
+        const totalValue = trade.totalValue < 0 ? `-$${Math.abs(trade.totalValue).toFixed(2)}` : `$${trade.totalValue.toFixed(2)}`;
+
+        simulationDetails += `
+            <tr>
+                <td>${trade.date}</td>
+                <td>${trade.action}</td>
+                <td>${price}</td>
+                <td>${trade.units || 'N/A'}</td>
+                <td>${trade.holdings}</td>
+                <td>${cashOnHand}</td>
+                <td>${totalValue}</td>
+                <td>${trade.decisionBase.technicalRecommendation}</td>
+                <td>${trade.decisionBase.totalScore}</td>
+                <td>${trade.decisionBase.transformerRecommendation}</td>
+            </tr>
+        `;
+    });
 
     simulationDetails += `</table>`;
 

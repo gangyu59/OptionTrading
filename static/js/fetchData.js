@@ -1,3 +1,5 @@
+// static/js/fetchData.js
+
 const API_KEY = 'OSQ403SM4KEOHQSQ';
 
 async function fetchStockData(symbol, startDate, endDate) {
@@ -295,3 +297,51 @@ async function fetchStochastic(symbol, startDate, endDate) {
         throw error;
     }
 }
+
+async function fetchAllData(symbol, startDate, endDate, type) {
+    if (!setGlobalVariables(type)) {
+        return;
+    }
+    try {
+        stockData = await fetchStockData(symbol, startDate, endDate);
+        macdData = await fetchMACD(symbol, startDate, endDate);
+        kdjData = await fetchKDJ(symbol, startDate, endDate);
+        rsiData = await fetchRSI(symbol, startDate, endDate);
+        maData = await fetchMA(symbol, startDate, endDate);
+        atrData = await fetchATR(symbol, startDate, endDate);
+        adxData = await fetchADX(symbol, startDate, endDate);
+        stochasticData = await fetchStochastic(symbol, startDate, endDate);
+
+        const combinedData = stockData.map((data, index) => ({
+            ...data,
+            macd: macdData[index] ? macdData[index].macd : null,
+            macdSignal: macdData[index] ? macdData[index].signal : null,
+            k: kdjData[index] ? kdjData[index].k : null,
+            d: kdjData[index] ? kdjData[index].d : null,
+            rsi: rsiData[index] ? rsiData[index].rsi : null,
+            ma20: maData[index] ? maData[index].ma : null,
+            atr: atrData[index] ? atrData[index].atr : null,
+            adx: adxData[index] ? adxData[index].adx : null,
+            slowK: stochasticData[index] ? stochasticData[index].slowK : null,
+            slowD: stochasticData[index] ? stochasticData[index].slowD : null
+        }));
+
+        return combinedData;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+    }
+}
+
+// 全局化函数
+window.fetchStockData = fetchStockData;
+window.fetchBollingerBands = fetchBollingerBands;
+window.fetchMACD = fetchMACD;
+window.fetchKDJ = fetchKDJ;
+window.fetchOptionData = fetchOptionData;
+window.fetchRSI = fetchRSI;
+window.fetchMA = fetchMA;
+window.fetchATR = fetchATR;
+window.fetchADX = fetchADX;
+window.fetchStochastic = fetchStochastic;
+window.fetchAllData = fetchAllData;

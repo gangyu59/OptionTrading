@@ -33,6 +33,12 @@ function getTodayDate() {
     return today.toISOString().split('T')[0];
 }
 
+function getYesterdayDate() {
+    const today = new Date();
+    today.setDate(today.getDate() - 1);  // 将日期设为前一天
+    return today.toISOString().split('T')[0];
+}
+
 function getLastMonthDate() {
     const today = new Date();
     const lastMonth = new Date(today.setMonth(today.getMonth() - 1));
@@ -42,7 +48,7 @@ function getLastMonthDate() {
 function setDefault(type) {
     document.getElementById(type + '-symbol').value = 'NVDA';
     document.getElementById(type + '-start-date').value = getLastMonthDate();
-    document.getElementById(type + '-end-date').value = getTodayDate();
+    document.getElementById(type + '-end-date').value = getYesterdayDate();
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -74,41 +80,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     showTab('stock-trading');
 });
 
-async function fetchAllData(type) {
-    if (!setGlobalVariables(type)) {
-        return;
-    }
-    try {
-        stockData = await fetchStockData(symbol, startDate, endDate);
-        macdData = await fetchMACD(symbol, startDate, endDate);
-        kdjData = await fetchKDJ(symbol, startDate, endDate);
-        rsiData = await fetchRSI(symbol, startDate, endDate);
-        maData = await fetchMA(symbol, startDate, endDate);
-        atrData = await fetchATR(symbol, startDate, endDate);
-        adxData = await fetchADX(symbol, startDate, endDate);
-        stochasticData = await fetchStochastic(symbol, startDate, endDate);
-
-        const combinedData = stockData.map((data, index) => ({
-            ...data,
-            macd: macdData[index] ? macdData[index].macd : null,
-            macdSignal: macdData[index] ? macdData[index].signal : null,
-            k: kdjData[index] ? kdjData[index].k : null,
-            d: kdjData[index] ? kdjData[index].d : null,
-            rsi: rsiData[index] ? rsiData[index].rsi : null,
-            ma20: maData[index] ? maData[index].ma : null,
-            atr: atrData[index] ? atrData[index].atr : null,
-            adx: adxData[index] ? adxData[index].adx : null,
-            slowK: stochasticData[index] ? stochasticData[index].slowK : null,
-            slowD: stochasticData[index] ? stochasticData[index].slowD : null
-        }));
-
-        return combinedData;
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        throw error;
-    }
-}
-
 async function fetchData(type) {
     if (!setGlobalVariables(type)) {
         return;
@@ -117,7 +88,7 @@ async function fetchData(type) {
     document.getElementById(type + '-hourglass').style.display = 'block';
 
     try {
-        const data = await fetchAllData(type);
+        const data = await fetchAllData(symbol, startDate, endDate, type); // 使用 symbol, startDate, endDate 和 type
         allData = data;
 
         renderTrendChart(stockData, type);
@@ -239,15 +210,15 @@ async function simulateStock() {
     const initialInvestment = 10000;
 
     try {
-        const data = await fetchAllData('stock');
-//        console.log("Fetched all data: ", data);
-        
+        // 调用模拟交易函数，并接收结果
         const simulationResults = await simulateStockTrade(symbol, startDate, endDate, 1, 0, 1); // 设定 alpha, beta 和 gamma 的值
-//        console.log("Simulation results: ", simulationResults);
 
-        if (simulationResults) {
+        // 这里 simulationResults 是从 simulateStockTrade 返回的数据，包含所有交易细节和最终结果
+        if (simulationResults && simulationResults.tradeDetails.length > 0) {
+            console.log("Simulation Results:", simulationResults);
             displayStockSimulationResults(simulationResults); // 调用展示函数
         } else {
+            console.warn("Simulation returned no results.");
             document.getElementById('stockSimulation').innerText = 'Simulation returned no results.';
         }
     } catch (error) {
@@ -266,26 +237,26 @@ async function getStockRecommendation() {
     document.getElementById('stock-hourglass').style.display = 'block';
 
     try {
-        const data = await fetchAllData('stock');
+        const symbol = document.getElementById('stock-symbol').value;
+        const startDate = document.getElementById('stock-start-date').value;
+        const endDate = document.getElementById('stock-end-date').value;
+
+        // 调用 fetchAllData 获取数据
+        const data = await fetchAllData(symbol, startDate, endDate, 'stock');
 
         const recommendations = {
             bollinger: getBollingerBandsRecommendation(stockData),
             macd: getMACDRecommendation(macdData),
-            kdj: 
-							getKDJRecommendation(kdjData),
-            rsi: 
-							getRSIRecommendation(rsiData),
-            ma: 
-							getMARecommendation(maData),
-            atr: 
-							getATRRecommendation(atrData),
-            adx: 
-							getADXRecommendation(adxData),
+            kdj: getKDJRecommendation(kdjData),
+            rsi: getRSIRecommendation(rsiData),
+            ma: getMARecommendation(maData),
+            atr: getATRRecommendation(atrData),
+            adx: getADXRecommendation(adxData),
             stochastic: getStochasticRecommendation(stochasticData)
         };
 
         const { overallRecommendation, totalScore } = getOverallRecommendation(recommendations);
-        const transformerRecommendation = await getTransformerRecommendation('stock');
+        const transformerRecommendation = await getTransformerRecommendation(symbol, startDate, endDate, 'stock');
         displayStockRecommendation(recommendations, overallRecommendation, totalScore, transformerRecommendation);
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -297,7 +268,6 @@ async function getStockRecommendation() {
 
 window.fetchData = fetchData;
 window.setGlobalVariables = setGlobalVariables;
-window.fetchAllData = fetchAllData;
 window.getOptionAdvice = getOptionAdvice;
 window.simulateOption = simulateOption;
 window.getStockRecommendation = getStockRecommendation;

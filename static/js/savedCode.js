@@ -120,3 +120,9 @@ async function fetchKDJ(symbol) {
     }
     return data;
 }
+
+<canvas id="rsi-chart" width="800" height="180"></canvas>
+		    <canvas id="ma-chart" width="800" height="180"></canvas>
+		    <canvas id="atr-chart" width="800" height="180"></canvas>
+		    <canvas id="adx-chart" width="800" height="180"></canvas>
+		    <canvas id="stochastic-chart" width="800" height="180"></canvas>
